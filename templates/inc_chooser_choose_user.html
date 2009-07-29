@@ -1,0 +1,30 @@
+{% if not blocked and not optedout %}
+
+<p style="font-weight:600;margin-bottom:25px;">The first thing you'll need to do
+  is enter the username of the Flickr user whose photos you'd like to suggest
+  locations for.</p>
+
+{% else %}
+
+<p><strong>{{ other_user.username|escape }} does not want to have suggestions made on their photos.</strong></p>
+
+<p>Would you like to try another user?</p>
+
+{% endif %}
+
+<form id="lookup_nsid">
+	<input id="lookup_nsid_user" type="text" name="user" value="" size="40" class="choose_user" />
+        <input type="submit" value="FIND THIS USER" class="submit" />
+
+        <!--
+        <p>You can also add extra bits, like toppings on a pizza:</p>
+
+	<input type="text" name="tag" value="" size="40" class="choose_user" style="margin:none;" />
+        <input type="submit" value="WITH THIS TAG" class="submit" />
+        -->
+</form>
+
+<p style="font-size:11px;font-style:italic;margin-top:40px;">By the way, <q>username</q> means a person's
+  Flickr screen name. That's the name displayed on the photo pages (for example,
+  <q>Bob's photostream</q>) which may contain spaces and is sometimes different than the URL for their
+  photostream (for example <q>/photos/bobby</q>). Flickr is funny like that sometimes...</p>

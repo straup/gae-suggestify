@@ -1,0 +1,74 @@
+{% include "inc_head.html" %}
+
+<a name="settings"></a>
+
+<h2>Hello!</h2>
+
+<p>Suggestify a web application that allows you to geotag other people's photos on <a href="http://www.flickr.com/">Flickr</a> by suggesting a location to the photo's owner. Likewise, someone else can offer you suggestions of where <em>your</em> un-geotagged photos were taken.</p>
+
+<p>That location information is stored here until the photo's owner approves (or rejects) the suggestion. If approved, the photo is geotagged on Flickr (using the Flickr API) and the suggestor is credited by adding a special tag to the photo.</p>
+
+<h2>It's still a bit rough around the edges</h2>
+
+<p>The site is still very much in the
+  alpha-beta-disco-disco-danceball-revolution stage. It works but if something
+  sometimes <em>doesn't</em> work, I'm not surprised. Now that the basic
+  functionality is in place, I'm slowly going through looking for edge cases and
+  gotchas.</p>
+
+<p>Suggestions, pointers and (gentle) cluebats are welcome and encouraged!</p>
+
+<p><a href="#known">There is list of currently known-knowns below</a>.</p>
+
+<!--
+<a name="settings"></a>
+
+<h2>Settings</h2>
+
+<p>...</p>
+-->
+
+<a name="known"></a>
+
+<h2>Some known-knowns</h2>
+
+<ul class="about">
+
+<li>Apparently Safari 4 is full of weirdness when it loads this site; if
+  anyone's got ideas why I'd welcome them</li>
+
+<li>You can not filter by tags (yet)</li>
+
+<li>You can not pull in your contact list</li>
+
+<li>There is no pagination yet (in a lot of places)</li>
+
+<li>The carousel is weird and the formatting is off</li>
+
+<li>Photos are not removed from the carousel post-suggestion</li>
+
+<li>Photos that already have a (pending) suggestion are not excluded from the
+  carousel</li>
+
+<li>Lots of other similar interactions and details are missing</li>
+
+<li>There are no notifications (yet) which means both parties need to know about
+the side, though you can <a href="/settings/notifications">configure the app to
+    send you email</a> when someone else suggests a location for one of your photos</li>
+
+<li>There are no hooks for "corrections" (this was deliberately punted on for now)</li>
+
+<li>The review does not (double) check that a photo with suggestions hasn't
+  already been deleted</li>
+
+<li>The "show me this suggestion on a map" popup is crude, at best</li>
+
+<li>It is not possible to load multiple tile sets for the map (yet)</li>
+
+<li>It hasn't been tested in IE</li>
+
+<li>Uh, other stuff surely</li>
+
+</ul>
+
+{% include "inc_foot.html" %}

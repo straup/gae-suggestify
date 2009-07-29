@@ -1,0 +1,53 @@
+
+	 {% include "inc_main_get_people_info.html" %}
+
+          <div id="greeting">
+	    {% include "inc_main_buddyicon.html" %}
+
+            <p><span style="font-weight:700;font-size:13pt;">
+            {% if user.username %}
+            Hi, {{ user.username|escape }}!
+            {% else %}
+            Hi there!
+            {% endif %}
+            </span><br /><br />
+
+          {% if pending_suggestions %}
+          Would you like to:
+          {% else %}
+          There are no pending suggestions on your photos to review, right now, but would you like to:
+          {% endif %}
+          </p>
+
+          </div>
+
+          <ul class="options">
+            <li><a href="/chooser">Suggest a location</a></li>
+
+            {% if pending_suggestions %}
+            <li id="review_link">
+
+              {% ifequal user.perms 1 %}
+              <a href="#" onclick="javascript:confirm_token_change_review();return false;">Review suggested locations</a>
+              {% else %}
+              <a href="/review">Review suggested locations</a>
+              {% endifequal %}
+
+              <span style="font-size:12pt;color:#ff6699;">
+                {% ifequal pending_suggestions 1 %}
+                (there's one waiting!)
+                {% else %}
+                (there are {{ pending_suggestions|escape }} of them)
+                {% endifequal  %}
+              </span>
+            </li>
+            {% endif %}
+
+          </ul>
+
+          <p>Or you can also:</p>
+
+          <ul class="alt_options">
+            <li><a href="/about#known">Review the list of known-knowns (it is still early days)</a></li>
+            <li><a href="/settings">Review your settings</a></li>
+          </ul>

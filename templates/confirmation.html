@@ -1,0 +1,20 @@
+{% include "inc_head.html" %}
+
+{% ifequal type "email" %}
+
+{% if confirmed %}
+
+<p>Okay! You are all set to receive email notifications when someone suggestions a
+location for your photos.</p>
+
+<p>If you change your mind you can <a href="/settings/notifications">disable email notifications</a> whenever you want.</p>
+
+{% else %}
+
+Does not compute.
+
+{% endif %}
+
+{% endifequal %}
+
+{% include "inc_foot.html" %}

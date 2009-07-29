@@ -1,0 +1,32 @@
+          <div id="greeting">
+            <img src="http://farm1.static.flickr.com/1/buddyicons/35034348999@N01.jpg" style="float:left;margin-right:20px;"/>
+
+            <p><span style="font-weight:700;font-size:13pt;">
+            {% if user.username %}
+            Hi, {{ user.username|escape }}!
+            {% else %}
+            Hi there!
+            {% endif %}
+            </span><br /><br />
+
+            You have chosen not to allow other people to suggest locations for
+            your photos.
+          </p>
+
+          </div>
+
+          <br />
+
+          <p>Would you like to:</p>
+
+          <ul class="options">
+            <li><a href="/allow">Allow suggestions</a></li>
+
+          </ul>
+
+          <p>Or you can also:</p>
+
+          <ul class="alt_options">
+            <li><a href="/settings">Review your settings</a></li>
+            <li><a href="/about">Read the FAQ</a></li>
+          </ul>

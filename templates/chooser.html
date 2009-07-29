@@ -1,0 +1,29 @@
+{% include "inc_head.html" %}
+
+{# please god make django templates die a firey death... #}
+
+{% if blocked or optedout %}
+{% include "inc_chooser_choose_user.html" %}
+{% else %}
+
+	{% if context %}
+
+		{% ifequal context 'user' %}
+		{% include "inc_chooser_choose_photos.html" %}
+		{% endifequal %}
+
+		{% ifequal context 'photo' %}
+		{% include "inc_chooser_photo.html" %}
+		{% endifequal %}
+
+		{% ifequal context 'random' %}
+		{% include "inc_chooser_random_photos.html" %}
+		{% endifequal %}
+
+	{% else %}
+	{% include "inc_chooser_choose_user.html" %}
+	{% endif %}
+
+{% endif %}
+
+{% include "inc_foot.html" %}

@@ -1,0 +1,43 @@
+
+<script type="text/javascript" src="/javascript/jquery.js"></script>
+<script type="text/javascript" src="/javascript/api.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+    var api_args = {
+	'host' : '{{ host_url|escape }}',
+	'enable_logging' : {{ config.javascript_logging|escape }},
+    };
+
+    var meth_args = {
+	'user_id' : '{{ user.nsid|escape }}',
+    };
+
+    api = new info.aaronland.geosuggestions.API(api_args);
+
+{% if not user.buddyicon_url %}
+
+    var _buddyiconDoThisOnSuccess = function(rsp){
+	var url = rsp.getAttribute('buddyicon_url');
+	$("#buddyicon").attr('src', encodeURI(url));
+    };
+
+    var _buddyiconDoThisIfNot = function(rsp){ };
+
+    api.api_call('buddyicon', meth_args, _buddyiconDoThisOnSuccess, _buddyiconDoThisIfNot);
+
+{% endif %}
+
+{% if not user.path_alias %}
+
+    var _pathaliasDoThisOnSuccess = function(rsp){ };
+    var _pathaliasDoThisIfNot = function(rsp){ };
+
+    api.api_call('pathalias', meth_args, _pathaliasDoThisOnSuccess, _pathaliasDoThisIfNot);
+
+{% endif %}
+
+});
+
+</script>

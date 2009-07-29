@@ -1,0 +1,31 @@
+{% include "inc_head.html" %}
+
+<p>Would you like to:</p>
+
+<ul class="options">
+
+ {% ifequal user.has_opted_out '' %}
+  	<li><a href="/allow">Enable
+ suggestions</a> <span style="font-size:12pt;color:#ff6699;">(for
+ your photos)</span></li>
+ {% else %}
+  	<li><a href="/deny">Disable suggestions</a> <span style="font-size:12pt;color:#ff6699;">(for
+ your photos)</span></li>
+ {% endifequal %}
+
+        <li><a href="/settings/notifications">Configure
+        notifications</a> <span style="font-size:12pt;color:#ff6699;">(when
+        someone suggests a location)</span></li>
+
+	<li><a href="/blocked">View users you've
+	blocked</a> <span style="font-size:12pt;color:#ff6699;">(from making suggestions)</span></li>
+
+</ul>
+
+<p>Or would you like to:</p>
+
+<ul class="alt_options">
+  <li><a href="/faq#settings">Know more about what these settings are and what they do?</a></li>
+</ul>
+
+{% include "inc_foot.html" %}

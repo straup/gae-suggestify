@@ -1,0 +1,227 @@
+<style type="text/css">
+#iamhere_coordinates { display:none !important; }
+#iamhere_location { display:none !important; }
+#iamhere_warning { display:none !important; }
+</style>
+
+<script type="text/javascript" src="/javascript/iamheremap.nojquery.js"></script>
+<script type="text/javascript" src="/javascript/review.js"></script>
+<script type="text/javascript" src="/javascript/buddyicon.js"></script>
+<script type="text/javascript" src="/javascript/api.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function(){ 
+
+   var review_args = {
+		'geosuggestions_apihost' : '{{ host_url|escape }}',
+                'flickr_apikey' : '{{ config.flickr_apikey|escape }}',
+		'enable_logging' : {{ config.javascript_logging|escape }},
+		'approve_crumb' : '{{ approve_crumb|escape }}',
+		'reject_crumb' : '{{ reject_crumb|escape }}',
+		'block_crumb' : '{{ block_crumb|escape }}',
+   };
+
+   window.review = new info.aaronland.geosuggestions.Review(review_args);
+
+   var buddyicon_args = {
+		'geosuggestions_apihost' : '{{ host_url|escape }}',
+		'enable_logging' : {{ config.javascript_logging|escape }},
+   };
+
+   window.buddyicon = new info.aaronland.geosuggestions.Buddyicon(buddyicon_args);
+	
+   // local cache for WOE lookups
+
+   window.woe_map = {};
+
+   {% for s in pending %}
+
+	var args = {'photo_id' : '{{ s.photo_id }}' };
+
+	window.review.api.api_call('flickr.photos.getInfo', args, function(rsp) {
+
+		// on success
+
+		var pending = "#photo_{{ s.key|escape }}";
+		var details = "#details_{{ s.key|escape }}";
+
+		var html = '';
+
+		var url = 'http://farm' + rsp['photo']['farm'] + '.static.flickr.com/' + rsp['photo']['server'] + '/' + rsp['photo']['id'] + '_' + rsp['photo']['secret'] + '_m.jpg';
+		var href = 'http://www.flickr.com/photos/' + rsp['photo']['owner']['nsid'] + '/' + rsp['photo']['id'];
+
+		html += '<a href="' + href + '">';
+		html += '<img src="' + url + '" style="border:1px dotted #ccc; padding:5px;" />';
+		html += '</a>';
+
+		html += '<br />';
+
+		html += '<div class="suggestion_showme" id="showme_{{ s.key|escape }}">';
+    		html += '<a href="#" onclick="javascript:window.review.showMap({{ s.latitude|escape }}, {{ s.longitude|escape }}, {{ s.accuracy|escape }}); return false;">Show me where this photo would be on a map</a>';
+		html += '</div>';
+
+		$(pending).html(html);
+		$(details).show();
+
+	}, function (rsp) { 
+		// on fail
+
+		_self.log("failed to retrieve photo info for {{ s.photo_id|escape }}");
+		_self.log(rsp);
+	});
+
+	// do these at random offsets so that we can (hopefully)
+	// cache calls to flickr.places.getInfo
+
+	var delay = Math.floor(Math.random() * 10000);
+
+	setTimeout(function(){
+
+		// have we already called places.getInfo for this woeid ?
+
+		var woeid = String({{s.woeid|escape}});
+
+		if (window.woe_map[ woeid.toString() ]){
+			var name = window.woe_map[ woeid.toString() ];
+			$("#woe_{{ s.key|escape }}").html("In human-speak, that\'s <strong>" + name + "</strong>.");
+			return;
+		}
+
+		var args = {
+			'woe_id' : '{{ s.woeid|escape }}',
+		};
+
+		window.review.api.api_call('flickr.places.getInfo', args, function (rsp){
+			var woeid = String(rsp['place']['woeid']);
+			var name = rsp['place']['name'];
+			window.woe_map[ woeid.toString() ] = name;
+			$("#woe_{{ s.key|escape }}").html("In human-speak, that\'s <strong>" + name + "</strong>.");
+
+		}, function (rsp) {});
+
+	}, delay);
+
+	// fetch the buddyicon for the suggestor
+
+	var delay = Math.floor(Math.random() * 3000);
+	
+        setTimeout(function(){
+		window.buddyicon.fetch('{{ s.suggestor_nsid|escape }}', 'pending_buddyicon_{{ s.key|escape }}');
+
+        }, delay);
+
+   {% endfor %}
+
+    var map_args = {
+  		'modestmaps_provider' : 'CloudMade',
+  		'cloudmade_apikey' : '{{ config.cloudmade_apikey|escape }}',
+  		'map_style' : '{{ config.cloudmade_mapstyle|escape }}',
+		'map_width' : 600,
+		'map_height': 250,
+		'disable_query_args' : true,
+   };
+
+   window.iamheremap = new info.aaronland.iamhere.Map('iamheremap_review', map_args);
+
+});
+
+function show_tweak_menu(suggestion_id){
+	$("#edit_" + suggestion_id).hide();
+	$("#tweak_" + suggestion_id).show();
+}
+
+function hide_tweak_menu(suggestion_id){
+	$("#tweak_" + suggestion_id).hide();
+	$("#edit_" + suggestion_id).show();
+}
+
+</script>
+
+<!-- I'm just not very good at CSS positioning is all... -->
+
+<div id="iamheremap_reviewcontainer" style="display:none;">
+  <div id="iamheremap_reviewbackground"></div>
+  <div id="iamheremap_reviewclose">this is where your photo would be geotagged. click here to <a href="#" onclick="javascript:window.review.hideMap(); return false;">hide the map</a>.</div>
+</div>
+
+<div id="iamheremap_review" style="display:none;"></div>
+
+<!-- sigh... -->
+
+	{% for s in pending %}
+<div class="pending">
+	  <div class="pending_photo" id="photo_{{ s.key|escape }}">
+            <div class="whirclick">loading</div>
+          </div>
+
+	  <div class="pending_details" id="details_{{ s.key|escape }}" style="display:none;">
+
+                <div class="pending_buddyicon" id="pending_buddyicon_{{ s.key|escape }}">
+                  <img src="http://www.flickr.com/images/buddyicon.jpg" height="32" width="32" />
+                </div>
+
+		<p><a href="http://www.flickr.com/people/{{
+		s.suggestor_nsid}}">{% if s.suggestor_username %}{{
+		s.suggestor_username }}{% else  %}Flickr user {{
+		s.suggestor_nsid }}{% endif %}</a> suggests this photo is
+		located at latitude <strong>{{ s.latitude|escape }}</strong> and
+		longitude <strong>{{ s.longitude|escape }}</strong> at zoom
+		level <strong>{{ s.accuracy|escape }}</strong>.
+                {# how did templates this bad get designed... #}
+                {% ifequal s.context 1 %} (They also think it was taken <strong>indoors</strong>.){% endifequal %}
+                {% ifequal s.context 2 %} (They also think it was taken <strong>outdoors</strong>.){% endifequal %}
+                </p>
+
+                <p><span id="woe_{{ s.key|escape }}"><em>Where is that? I'm
+                looking up the name, right now.</span></em></p>
+                
+                <p class="suggestion_edit" id="edit_{{ s.key|escape}}"><a href="#" onclick="javascript:show_tweak_menu('{{ s.key|escape}}');return false;">Edit suggestion details</a></p>
+
+                <div id="tweak_{{ s.key|escape }}" class="suggestion_tweak">
+                  <div class="suggestion_perms" id="perms_{{ s.key|escape }}">
+                    <p style="font-weight:700;">Who can see the location information for this photo?</p>
+                    <form>
+                      <input type="radio" name="geo_perms_{{ s.key|escape }}" value="1" {% ifequal geo_perms 1 %}checked="true" {% endifequal %} /> anyone
+                      <input type="radio" name="geo_perms_{{ s.key|escape }}" value="2" {% ifequal geo_perms 2 %}checked="true" {% endifequal %} /> contacts
+                      <input type="radio" name="geo_perms_{{ s.key|escape }}" value="4" {% ifequal geo_perms 4 %}checked="true" {% endifequal %} /> friends
+                      <input type="radio" name="geo_perms_{{ s.key|escape }}" value="5" {% ifequal geo_perms 5 %}checked="true" {% endifequal %} /> family
+                      <input type="radio" name="geo_perms_{{ s.key|escape }}" value="3" {% ifequal geo_perms 3 %}checked="true" {% endifequal %}/> friend <em>and</em> family
+                      <input type="radio" name="geo_perms_{{ s.key|escape }}" value="6" {% ifequal geo_perms 6 %}checked="true" {% endifequal %}/> just me
+                    </form>
+                  </div>
+
+                  <div class="suggestion_context" id="perms_{{ s.key|escape }}">
+                    <p style="font-weight:700;">Where was this photo was taken?</p>
+                    <form>
+                      <input type="radio" name="geo_context_{{ s.key|escape }}" value="1" {% ifequal s.context 1 %}checked="true" {% endifequal %} /> indoors
+                      <input type="radio" name="geo_context_{{ s.key|escape }}" value="2" {% ifequal s.context 2 %}checked="true" {% endifequal %} /> outdoors
+                      <input type="radio" name="geo_context_{{ s.key|escape }}" value="0" {% ifequal s.context 0 %}checked="true" {% endifequal %} /> I'd rather not say
+                    </form>
+                  </div>
+
+                  <div style="text-align:right;">
+                    <a href="#" onclick="javascript:hide_tweak_menu('{{ s.key|escape }}');return false;">close</a>
+                  </div>
+
+                </div>
+
+		<div class="suggestion_approve" id="approve_{{ s.key|escape }}">
+                  <a href="#" onclick="javascript:window.review.approve('{{ s.key|escape }}', '{{ s.photo_id|escape}}');return false;">approve</a>
+		</div>
+		<div class="suggestion_reject" id="reject_{{ s.key|escape }}">
+                  <a href="#" onclick="javascript:window.review.reject('{{ s.key|escape }}');return false;">reject</a>
+                </div>
+		<div class="block_user" id="block_{{ s.key|escape }}">
+                  <a href="#" onclick="javascript:window.review.block('{{ s.key|escape}}', '{{ s.suggestor_nsid|escape }}');return false;">block this user</a>
+                </div>
+
+                <div id="whirclick_{{ s.key|escape }}" class="whirclick" style="display:none;">whir! click!!</div>
+
+                <br clear="all" />
+        </div>
+        
+        <br clear="all" />
+        </div>
+
+	{% endfor %}

@@ -1,0 +1,90 @@
+<html>
+	<head>
+            <title>suggestify (alpha){% if page_title %}{{ page_title|escape }}{% endif %}</title>
+            <link rel="stylesheet" href="/css/main.css" type="text/css" />
+            <script type="text/javascript" src="/javascript/jquery.js"></script>
+
+{% if user %}
+{% ifequal user.perms 1 %}
+
+            <script type="text/javascript">
+
+                function confirm_token_change(id){
+
+                	var html = '<div id="token_change_' + id + '">';
+                	html += '<span style="font-size:1.5em;">There\'s just one thing:</span><br /><br />';
+                  	html += 'In order to review suggestions, the authentication token ';
+                  	html += 'that connects your Flickr account with "suggestify" will need to be upgraded ';
+                  	html += 'to have "write" permissions.<br /><br />';
+                  	html += 'This is so that we can geotag a photo on your behalf ';
+                  	html += 'when you approve a suggestion.<br /><br />';
+                  	html += 'All that means is that when you click <q style="color:green;">OK</q> you\'ll be sent to Flickr and asked ';
+                  	html += 'again to allow "suggestify" access to your account, only this time with ';
+                  	html += '"write" permissions.<br /><br />';
+                  	html += 'Once you do, you\'ll be sent back here to the list of suggestion awaiting your review.';
+                  	html += '</div>';
+                	html += '<form method="GET" action="/review">';
+                  	html += '<input type="submit" value="NEVERMIND. That\'s not what I want to do" onclick="skip_token_change(\'';
+			html += id;
+                        html += '\');return false" class="reject_token_change"/>';
+                  	html += '<input type="submit" value="OK" class="confirm_token_change" />';
+                  	html += '<br clear="all" />';
+                  	html += '</form>';
+
+                	$("#" + id).html(html);
+                }
+
+                function skip_token_change(id){
+
+                	var html = '<div id="token_skip">';
+                	html += 'Okay! We\'ll leave your "read" only Flickr authentication token in place';
+                  	html += '</div>';
+
+                	if (id == 'main'){
+                		html += '<p>In the meantime, would you like to:</p>';
+                		html += '<ul class="options">';
+                		html += '<li><a href="/chooser">Suggestion a location</a></li>';
+                		html += '</ul>';
+                	}
+
+                	$("#" + id).html(html);
+                }
+
+                function confirm_token_change_navi(){
+                	confirm_token_change('main');
+                }
+
+                function confirm_token_change_review(){
+                	confirm_token_change('review_link');
+                }
+
+            </script>
+
+{% endifequal %}
+{% endif %}
+
+        </head>
+        <body>
+
+            <div id="whoami">
+            {% if user.username %}
+                You are logged in with
+                your <a href="http://www.flickr.com/photos/{% ifequal user.path_alias "" %}{{ user.nsid|escape }}{% else %}{{ user.path_alias|escape }}{% endifequal %}/" class="fl_username">{{ user.username|escape }}</a> Flickr account
+
+                <form method="POST" action="/signout" style="display:inline;margin-left:15px;">
+                  <input type="hidden" name="crumb" value="{{ logout_crumb|escape }}" />
+                  <input type="submit" value="sign out" style="border:1px dotted white;background-color:pink;color:white;font-size:14px;padding:5px;" />
+                </form>
+
+            {% else %}
+                <form method="GET" action="/signin" style="display:inline;">
+                  <input type="hidden" name="crumb" value="{{ login_crumb|escape }}" />
+                  <input type="submit" value="sign in" style="border:1px dotted yellow;background-color:#ff0066;color:white;font-size:14px;padding:5px;" />
+                </form>
+            {% endif %}
+            </div>
+            <br clear="all" />
+
+            {% include "inc_head_navi.html" %}
+
+            <div id="main">

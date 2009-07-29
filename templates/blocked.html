@@ -1,0 +1,80 @@
+{% include "inc_head.html" %}
+
+<script type="text/javascript" src="/javascript/jquery.js"></script>
+
+<script type="text/javascript" src="/javascript/blocked.js"></script>
+<script type="text/javascript" src="/javascript/api.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function(){ 
+
+   var blocked_args = {
+		'geosuggestions_apihost' : '{{ host_url|escape }}',
+		'enable_logging' : {{ config.javascript_logging|escape }},
+		'unblock_crumb' : '{{ unblock_crumb|escape }}',
+   };
+
+   window.blocked = new info.aaronland.geosuggestions.Blocked(blocked_args);
+
+   var api_args = {
+   	'host' : '{{ host_url|escape }}',
+	'enable_logging' : {{ config.javascript_logging|escape }},
+   };
+
+   var api = new info.aaronland.geosuggestions.API(api_args);
+
+   {% for u in blocked_users %}
+
+	{% ifequal u.buddyicon_url '' %}
+
+		setTimeout(function(){
+
+			// hello moon language, my old friend...
+
+   			api.api_call('buddyicon', {'user_id' : '{{u.nsid|escape}}'}, function(rsp){
+
+				var url = rsp.getAttribute('buddyicon_url');
+				$("#buddyicon_{{ u.nsid|cut:"@"|escape }}").attr('src', url);
+
+			}, function(){ });
+		}, 1000);
+        {% endifequal %}
+   {% endfor %}
+});
+
+</script>
+
+<h2>People you have blocked</h2>
+
+{% if count_blocked %}
+<ul class="blocked_users">
+
+	{% for u in blocked_users %}
+        <li id="blocked_{{ u.nsid|cut:"@"|escape }}" style="margin-top:40px; margin-bottom:10px;padding:0px;font-size:18pt;">
+
+          <div style="float:left;margin-bottom:75px;">
+{% if u.buddyicon_url %}
+            <img src="{{ u.buddyicon_url }}" id="buddyicon_{{
+            u.nsid|cut:"@"|escape }}" style="float:left;margin-right:20px;"/>
+{% else %}
+            <img src="http://www.flickr.com/images/buddyicon.jpg" id="buddyicon" style="float:left;margin-right:20px;"/>
+{% endif %}
+            </div>
+
+          <strong style="margin-left:20px;"><a href="http://www.flickr.com/people/{{ u.nsid|escape }}" style="color:#cc0066;text-decoration:none;">{{ u.username|escape }}</a></strong>
+
+          <a href="#" onclick="javascript:window.blocked.unblock('{{ u.nsid|escape }}', '{{ u.username|escape }}');return false;" class="unblock_user">unblock</a></li>
+
+         <br clear="all" />
+
+	{% endfor %}
+
+</ul>
+{% else %}
+
+<p>You haven't blocked any other Flickr users from making suggestions on your photos.</p>
+
+{% endif %}
+
+{% include "inc_foot.html" %}

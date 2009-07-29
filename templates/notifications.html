@@ -1,0 +1,134 @@
+{% include "inc_head.html" %}
+
+<script type="text/javascript" src="/javascript/notifications.js"></script>
+<script type="text/javascript" src="/javascript/api.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function(){ 
+
+   var notify_args = {
+		'geosuggestions_apihost' : '{{ host_url|escape }}',
+		'enable_logging' : {{ config.javascript_logging|escape }},
+		'email_enable_crumb' : '{{ email_enable_crumb|escape }}',
+		'email_change_crumb' : '{{ email_enable_crumb|escape }}',
+		'email_disable_crumb' : '{{ email_disable_crumb|escape }}',
+   };
+
+   window.notify = new info.aaronland.geosuggestions.Notifications(notify_args);
+
+});
+
+   function display_email_setup (){
+	$("#new_email").show();
+   }
+
+   function submit_email_address(){
+	var address = $("#new_email_address").val();
+	window.notify.enable_email(address);
+  }
+
+   function display_disable_email (){
+	$("#disable_email").show();
+   }
+
+   function submit_disable_address(){
+	window.notify.disable_email();
+   }
+
+   function display_change_email (){
+	$("#change_email").show();
+   }
+
+   function submit_change_email(){
+	var address = $("#change_email_address").val();
+	window.notify.change_email(address);
+  }
+
+</script>
+
+<ul class="options">
+
+{% if settings.email_notifications %}
+
+	<li id="disable_email_listitem">
+          <a href="#" onclick="javascript:display_disable_email();return false;">Disable email notifications</a>
+
+          <div id="disable_email" style="font-size:12pt;display:none;margin-top:25px;margin-bottom:20px;">
+
+            Are you sure you want to disable email notifications? It's totally fine to do so but you will only be able to find out about new suggestions by visiting the site, every once in a while.
+            <br /><br />
+
+            <div id="disable_email_form">
+            <form onsubmit="javascript:submit_disable_address();return false;">
+              <input type="submit" value="YES, PLEASE DISABLE EMAIL NOTIFICATIONS" />
+            </form>
+            </div>
+
+          </div>
+	</li>
+
+        <li id="change_email_listitem">
+          <a href="#" onclick="javascript:display_change_email();return false;">Change your email address</a>
+
+          <div id="change_email" style="font-size:12pt;display:none;margin-top:25px;margin-bottom:20px;">
+
+            Okay, please enter a new email address below. We'll send a confirmation email to that address just like when you enabled email notifications.
+
+            The email will contain a link that you'll need to click in order to finish
+            registering your <em>new</em> email address.
+
+            <br /><br />
+
+            <span style="font-size:small; font-weight:100;font-style:italic;">(The email itself will be sent by a certain <q>Roboto Suggestificato</q>,
+            in case you're wondering what to look for.)</span>
+
+            <br /><br />
+
+            <div id="change_email_form">
+            <form onsubmit="javascript:submit_change_email();return false;">
+              <input type="text" size="40" id="change_email_address" name="email" />
+              <input type="submit" value="PLEASE SEND NOTIFICATIONS TO THIS ADDRESS FROM NOW ON" />
+            </form>
+          </div>
+        </li>
+
+{% else %}
+	<li>
+          <a href="#" onclick="javascript:display_email_setup(); return false;">Enable email notifications</a>
+          <span style="font-size:12pt;">for new suggestions</span>
+
+          <div id="new_email" style="font-size:12pt;display:none;margin-top:25px;margin-bottom:20px;">
+
+            Okay, the first thing you'll need to do is enter an email address
+            below.<br /><br /> Once you do and submit the request we'll generate a
+            confirmation code and send it by email to that address. The email
+            will contain a link that you'll need to click in order to finish
+            registering your email address.<br /><br />
+
+            <span style="font-size:small; font-weight:100;font-style:italic;">(The email itself will be sent by a certain <q>Roboto Suggestificato</q>,
+            in case you're wondering what to look for.)</span>
+
+            <br /><br />
+
+            <div id="new_email_form">
+            <form onsubmit="javascript:submit_email_address();return false;">
+              <input type="text" size="40" id="new_email_address" name="email" />
+              <input type="submit" value="PLEASE SEND NOTIFICATIONS TO THIS ADDRESS" />
+            </form>
+            </div>
+
+            </div>
+        </li>
+{% endif %}
+
+        <!--
+	<li>
+          <a href="">Enable comments</a>
+          <div style="font-size:12pt;">for new suggestions</div>
+        </li>
+        -->
+
+</ul>
+
+{% include "inc_foot.html" %}

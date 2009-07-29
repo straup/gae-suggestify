@@ -1,0 +1,11 @@
+{% include "inc_head.html" %}
+
+<h2>Pending suggested locations</h2>
+
+{% if count_pending %}
+{% include "inc_review_list.html" %}
+{% else %}
+{% include "inc_review_none.html" %}
+{% endif %}
+
+{% include "inc_foot.html" %}

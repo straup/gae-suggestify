@@ -1,0 +1,31 @@
+{% include "inc_head.html" %}
+
+{% if done %}
+	<p style="font-weight:700;">Okay! Now other people will be able to suggest locations for your photos!</p>
+
+        <p>If you change your mind, you can always <a href="/deny">disable
+            suggestions</a> whenever you want.</p>
+{% else %}
+
+	{% if has_opted_out %}
+
+	<p style="font-weight:700;">Are you sure you want to allow other users to suggest locations for your photos?</p>
+
+	<form method="POST" action="/allow" style="text-align:center;">
+            <input type="hidden" name="confirm" value="1" />
+            <input type="hidden" name="crumb" value="{{ optin_crumb|escape }}" />
+            <input type="submit" value="Yes, please re-enable suggestions"
+            class="submit" />
+        </form>
+
+	{% else %}
+
+	<p>You're already opted in!</p>
+
+        <p>Would you like to <a href="/deny">opt out instead?</a></p>
+
+	{% endif %}
+
+{% endif %}
+
+{% include "inc_foot.html" %}

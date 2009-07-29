@@ -1,0 +1,127 @@
+<div id="loading" style="font-size:24pt;font-weight:700;margin-top:10%;margin-bottom:10%;">LOADING STUFF... one moment please</div>
+
+<script type="text/javascript" src="/javascript/jquery.js"></script>
+<script type="text/javascript" src="/javascript/jquery.jcarousel.js"></script>
+
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="/javascript/JSPlacemaker.js"></script>
+<script type="text/javascript" src="/javascript/iamheremap.nojquery.js"></script>
+
+<script type="text/javascript" src="/javascript/chooser.js"></script>
+<script type="text/javascript" src="/javascript/api.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/css/jquery.jcarousel.css" />
+<link rel="stylesheet" type="text/css" href="/css/jquery.jcarousel.skin.css" />
+
+<style type="text/css">
+
+.jcarousel-skin-tango .jcarousel-container-horizontal {
+    width: 500;
+}
+
+.jcarousel-skin-tango .jcarousel-clip-horizontal {
+	width: 100%;
+}
+
+// why do I need to do this...
+
+.jcarousel-item {
+margin-left:12px;
+}
+
+#iamhere_coordinates { font-size:9px !important; }
+#iamhere_location { font-size:9px !important; }
+#iamhere_warning { display: none; }
+
+</style>
+
+<script type="text/javascript">
+
+$(document).ready(function(){ 
+
+    $("#loading").hide();
+	
+    $("#main").css("padding-left", "5%");
+    $("#main").css("padding-right", "5%");
+
+    var username = '{{ username|escape }}';
+
+    var map_args = {
+  		'modestmaps_provider' : 'CloudMade',
+  		'cloudmade_apikey' : '{{ config.cloudmade_apikey|escape }}',
+  		'map_style' : '{{ config.cloudmade_mapstyle|escape }}',
+  		'flickr_apikey' : '{{ config.flickr_apikey|escape }}',
+		'map_width' : 580,
+		'map_height': 250,
+		'enable_logging' : {{ config.javascript_logging|escape }},
+		'disable_query_args' : true,
+		'max_decimal_points' : 6,
+   };
+
+   var chooser_args = {
+		'geosuggestions_apihost' : '{{ host_url|escape }}',
+  		'flickr_apikey' : '{{ config.flickr_apikey|escape }}',
+		'placemaker_apikey' : '{{ config.placemaker_apikey|escape }}',
+		'enable_logging' : {{ config.javascript_logging|escape }},
+		'suggest_crumb' : '{{ suggest_crumb|escape }}',
+		'noidea_crumb' : '{{ noidea_crumb|escape }}',
+		'context' : 'random',
+   };
+
+   window.iamheremap = new info.aaronland.iamhere.Map('iamheremap', map_args);
+   window.chooser = new info.aaronland.geosuggestions.Chooser(chooser_args);
+	
+   chooser.photosSearchRandom();
+});
+
+</script>
+
+<div style="float:right">
+<div id="foo" style="max-width:300px; text-align:left;font-size:11px;">
+<h2>How does this work?</h2>
+
+<p>First, start by dragging the map around.</p>
+
+<p>As you do, you should see the
+  latitude and longitude appear (and change) beneath the map. Those coordinates
+  tell you where the center of the map (the crosshairs) is. After a short
+  delay, the map will try to <q>reverse geocode</q> those coordinates to tell
+  you where
+  it thinks that place is in human-speak.</p>
+
+<p>Next, try the <code style="font-weight:600;">find my location</code>
+  and <code style="font-weight:600;">find this place</code>
+  buttons. The map will zoom automatically to that location and update the
+  latitude and longitude accordingly.</p>
+
+<p>Once you're confortable with the map, click on a photo thumbnail in the
+  ribbon below the map. This will load a larger version in the space you
+  reading this reading this text.</p>
+
+<p>You can ask the map to try and guess where
+  that photo was taken by analyzing its tags and the refine the location by
+  panning and zooming the map.</p>
+
+<p>Once you've positioned the cross-hairs in the correct spot on the map click
+  the big pink <code style="font-weight:700;color:#ff0066;">suggest this
+  location</code> button. You will be asked to confirm your suggestion and
+  then, once you do, it will be recorded and displayed to the photo owner the
+  next time they visit the site.</p>
+
+</div>
+</div>
+
+<div id="iamheremap" style="margin-bottom:10px;"></div>
+
+
+<div id="options">
+	<div id="loading">LOADING MORE STUFF... <span style="font-size:14pt;">(like the photos)</span></div>
+</div>
+
+<br clear="all" />
+
+<div id="whatisthis">
+These are (not geotagged) photos from your contacts.
+</div>
+<br clear="all" />

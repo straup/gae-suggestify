@@ -1,0 +1,5 @@
+{% if user.buddyicon_url %}
+            <img src="{{ user.buddyicon_url|escape }}" id="buddyicon" style="float:left;margin-right:20px;"/>
+{% else %}
+            <img src="http://www.flickr.com/images/buddyicon.jpg" id="buddyicon" style="float:left;margin-right:20px;"/>
+{% endif %}

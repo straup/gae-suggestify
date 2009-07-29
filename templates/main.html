@@ -1,0 +1,14 @@
+{% include "inc_head.html" %}
+
+{% if user.nsid %}
+ {% if has_opted_out %}
+	{% include "inc_main_opted_out.html" %}
+ {% else %}
+	{% include "inc_main_logged_in.html" %}
+ {% endif %}
+
+{% else %}
+	{% include "inc_main_logged_out.html" %}
+{% endif %}
+
+{% include "inc_foot.html" %}

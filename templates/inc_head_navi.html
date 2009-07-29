@@ -1,0 +1,20 @@
+<ul id="navi">
+
+{% if user %}
+
+	<li><a href="/chooser">make a suggestion</a></li>
+
+        {% ifequal user.perms 1 %}
+        <li><a href="#" onclick="javascript:confirm_token_change_navi();return false;">review suggestions</a></li>
+        {% else %}
+        <li><a href="/review">review suggestions</a></li>
+        {% endifequal %}
+
+        <li><a href="/settings">settings</a></li>
+
+{% endif %}
+
+        <li><a href="/about">about</a></li>
+
+        <li><a href="/">home</a></li>
+</ul>
