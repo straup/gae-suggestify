@@ -1,0 +1,13 @@
+1) You will need to suck down FlickrApp and stick it in the root.
+
+2) Someday APIApp will have it's own package on github, etc. It might also
+   become part of the default FlickrApp package.
+
+3) A lot of the stuff in geosuggestions/__init__.py will become part of the
+   FlickrApp core. That's sitting on my laptop right now because I don't feel
+   like doing Git Yoga.
+
+4) This might actually be a very broken build. The jQuery ribbon thingy really
+   kind of sucks, but I don't feel like writing one from scratch right now.
+
+5) Uh. Stuff. With things.
