@@ -1,3 +1,4 @@
+from google.appengine.ext import db
 from geosuggestions import Geosuggestions
 from geosuggestions.Tables import dbSettings
 
