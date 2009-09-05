@@ -3,6 +3,9 @@ from geosuggestions.API.Core import CoreHandler
 
 import FlickrApp.User as User
 
+import logging
+logging.basicConfig(level=logging.INFO)
+
 class ApproveHandler (CoreHandler) :
 
     def run (self, ctx) :
@@ -24,14 +27,25 @@ class ApproveHandler (CoreHandler) :
         #
         # Check to see if the photo has already been geotagged
         #
-    
+
+	# Note: It's no longer clear why this got commented out.
+        # My guess is because it was I was concerend about the
+        # actual approval timing out. There are two things to
+        # consider here: 1) scrumjax-ing the check when a user
+        # hits approve 2) storing a local index of photos that
+        # have been geotgged either by suggestify or during a
+        # separate check 3) all of the above.
+        #
+        # (20090905/asc)
+        
+        """
+        
         args = {
             'photo_id' : suggestion.photo_id,
             'auth_token' : ctx.user.token,
             'check_response' : 1,
             }
 
-        """
         rsp = ctx.api_call('flickr.photos.getInfo', args)
         
         if not rsp :
@@ -43,6 +57,7 @@ class ApproveHandler (CoreHandler) :
         
             ctx.api_error(9, 'Photo has already been geotagged')
             return
+
         """
         
         #
@@ -73,12 +88,14 @@ class ApproveHandler (CoreHandler) :
             return
 
         #
-        # Geo perms
+        # Geo perms (it would be better if you could assign perms in setLocation...)
         #
 
         geoperms = int(ctx.request.get('geo_perms'))
         default = ctx.default_geoperms()
 
+        logging.debug("perms default:%s assigned:%s" % (default, geoperms))
+        
         if geoperms != default :
 
             method = 'flickr.photos.geo.setPerms'
@@ -109,38 +126,46 @@ class ApproveHandler (CoreHandler) :
             rsp = ctx.api_call('flickr.photos.geo.setPerms', args)
     
             if rsp['stat'] != 'ok' :
+                logging.warning('Failed to set location: %s (%s)' % (rsp['message'], rsp['code']))
                 pass
-
-            	# what then...
-                # ctx.api_error(10, 'Failed to set location: %s (%s)' % (rsp['message'], rsp['code']))
-                # return
 
         #
         # geo:suggestedby= machine tag but only if the geo perms are public
         #
-        
-        suggestor = User.get_user_by_nsid(suggestion.suggestor_nsid)
 
-        if suggestor and geoperms == 1 :
-            
-            suggested_by = suggestor.nsid
-            
-            if suggestor.path_alias :
-                suggested_by = suggestor.path_alias
-                    
-                tags = "geo:suggestedby=%s" % suggested_by
+	# This is probably a good candidate to do client-side if the approval
+        # returns OK
         
-                args = {
-                    'photo_id' : suggestion.photo_id,
-                    'tags' : tags,
-                    'auth_token' : ctx.user.token,
-                    'check_response' : 1,
+        logging.debug("tags perms:%s by:%s" % (geoperms, suggestion.suggestor_nsid))
+        
+        if geoperms == 1 and suggestion.suggestor_nsid != ctx.user.nsid :
+
+            # NSID is the default
+            
+            suggested_by = suggestion.suggestor_nsid
+
+            # But try to get their path alias (since this is immutable)
+            
+            suggestor = User.get_user_by_nsid(suggestion.suggestor_nsid)
+                    
+            if suggestor and suggestor.path_alias :
+                suggested_by = suggestor.path_alias
+
+            # Now tag
+            
+            tags = "geo:suggestedby=%s" % suggested_by
+        
+            args = {
+                'photo_id' : suggestion.photo_id,
+                'tags' : tags,
+                'auth_token' : ctx.user.token,
+                'check_response' : 1,
                 }
         
-                rsp = ctx.api_call('flickr.photos.addTags', args)
+            rsp = ctx.api_call('flickr.photos.addTags', args)
 
         #
-        # update
+        # Update (possibly do this before setting tags?)
         #
         
         dbSuggestion.approve_suggestion(suggestion)
