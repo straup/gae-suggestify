@@ -149,7 +149,7 @@ class SearchForUserHandler (CoreHandler) :
         if not ctx.ensure_args(required) :
             return 
 
-        per_page = 10
+        per_page = 100
         page = ctx.request.get('page')
                        
         method = 'flickr.photos.search'
