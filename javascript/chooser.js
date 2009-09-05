@@ -64,8 +64,6 @@ info.aaronland.geosuggestions.Chooser.prototype.photosSearch = function(args){
 
     var _self = this;
 
-    // generate carousel image html
-
     var _getItemHTML = function(photo){
 
         var uid = _self.generatePhotoUID(photo, 's');
@@ -78,10 +76,8 @@ info.aaronland.geosuggestions.Chooser.prototype.photosSearch = function(args){
         return img;
     };
 
-    // populate the carousel
-
     var _loadCarousel = function(carousel, state){
-
+    
         for (var i = carousel.first; i <= carousel.last; i++) {
 
             if (carousel.has(i)) {
@@ -89,17 +85,12 @@ info.aaronland.geosuggestions.Chooser.prototype.photosSearch = function(args){
             }
 
             if (i > _self.rsp.photos.perpage) {
-                console.log('ook');
                 break;
             }
 
             var photo = _self.get_photo_by_offset((i - 1));
 
             if (! photo){
-
-                // fetch new photos...
-
-                console.log('ack');
                 break;
             }
 
@@ -107,32 +98,28 @@ info.aaronland.geosuggestions.Chooser.prototype.photosSearch = function(args){
         }
     
     };
-    
-    // photos search returns 200
 
     var _doThisOnSuccess = function(rsp){
 
-        // has photos?
+        console.log(rsp);
 
-        var total = parseInt(rsp.photos.total); 
+        // we really do reference this elsewhere
+        _self.rsp = rsp;
+
+        _self.build_search_index(rsp);
+
+        var total = parseInt(rsp.photos.total);
         var size = parseInt(rsp.photos.perpage);
 
         if (! total){
-            var html = '<div id="problem">';
+            var html = '<p style="color:red;font-weight:700;font-size:14pt;max-width:585px;">';
             html += 'Hrm. The user "' + args['username'] + '" has no photos that are suitable for suggestification.';
-            html += '<br /><br/>';
-            html += 'Would you like to <a href="/chooser">try to find another user</a>?';
-            html += '</div>';
+            html += '</p>';
+            html += '<p>Would you like to <a href="/chooser">try to find another user</a>?</p>';
 
             $("#photos").html(html);
             return;
         }
-
-        // ok, get started...
-        // we really do reference this elsewhere
-
-        _self.rsp = rsp;
-        _self.build_search_index(_self.rsp);
 
         var link = '<a href="http://www.flickr.com/photos/' + escape(args['nsid']) + '" style="text-decoration:none;">' + escape(args['username']) + '\'s</a>';
         var what = 'these are ' + link + ' (not geotagged) photos';
@@ -145,79 +132,45 @@ info.aaronland.geosuggestions.Chooser.prototype.photosSearch = function(args){
 	}
 
         if (total < size){
-            size = rsp.photos.photo.length;
+            size = rsp.photos.total;
         }
 
         $("#photos").html("<ul></ul>");
 
+        // this isn't quite right...
+
+        var _onNext = function(foo, bar, canhas_next){
+
+             if (canhas_next){
+                    return;
+             }
+
+             var nsid = args['nsid'];
+             var page = (args['page']) ? args['page'] + 1 : 2;
+              _self.photosSearch({'nsid' : nsid, 'page' : page});
+        };
+
         jQuery('#photos').jcarousel({
-                //'size' : size,
-                'scroll': 4,
-                'visible': 5,
+                'size' : size,
+                'scroll':5,
+                'visible':5,
                 'itemLoadCallback': { onBeforeAnimation: _loadCarousel },
+                // 'buttonNextCallback' : _onNext,
          });
 
         $("#whatisthis").show();
     };
 
     var _doThisIfNot = function (rsp){
-
-        if (rsp['error']['code'] == 2){
-
-            var nsid = args['nsid'];
-            var page = 2;
-            var retries = 2;
-
-            if (args['page']){
-                page = args['page'] + 1;
-            }
-
-            if (args['retries']){
-                retries = args['retries'] + 1;
-            }
-
-            if (Number(retries) < 5){
-                _self.log("retry search #" + retries);
-                _self.photosSearch({'nsid' : nsid, 'page' : page, 'retries' : retries});
-                return;
-            }
-
-            var html = '<div id="problem">';
-            html += 'Hrm...can\'t find any photos suitable for suggestification!';
-            html += '<br /><br/>';
-            html += 'Would you like to <a href="/chooser">try to find another user</a>?';
-            html += '</div>';
-
-            $("#photos").html(html);
-            return;
-        }
-
-        var html = '<div id="problem">';
-        html += 'INVISIBLE ERROR CAT HISSES...';
-        html += '<br /><br/>';
-        html += 'Would you like to <a href="/chooser">try to find another user</a>?';
-        html += '</div>';
-        
-        $("#photos").html(html);
-        return;
+        _self.log(rsp);
     };
 
-    var api_args = { 'user_id' : args['nsid'] }
+    var method = 'search';
 
-    if (args['page']){
-        api_args['page'] = args['page'];
-    }
-    
-    this.api.api_call('search', api_args, _doThisOnSuccess, _doThisIfNot);
+    this.api.api_call('search', { 'user_id' : args['nsid'], 'page' : args['page'] }, _doThisOnSuccess, _doThisIfNot);
 };
 
-info.aaronland.geosuggestions.Chooser.prototype.photosSearchRandom = function(args){
-
-    // ugh...
-
-    if (! args){ 
-        args = {};
-    }
+info.aaronland.geosuggestions.Chooser.prototype.photosSearchRandom = function(){
 
     var _self = this;
 
@@ -229,11 +182,7 @@ info.aaronland.geosuggestions.Chooser.prototype.photosSearchRandom = function(ar
         var size = parseInt(rsp.photos.perpage);
 
         if (! total){
-            var html = '<p id="problem">';
-            html += 'There aren\'t any photos to suggest a location for!';
-            html += '</p>';
-
-            $("#options").html(html);
+            $("#options").html('There aren\'t any photos to suggest a location for!');
             return;
         }
 
@@ -248,52 +197,13 @@ info.aaronland.geosuggestions.Chooser.prototype.photosSearchRandom = function(ar
     };
 
     var _doThisIfNot = function(rsp){
-
-        var page = 2;
-        var retries = 2;
-
-        if (args['page']){
-            page = args['page'] + 1;
-        }
-
-        if (args['retries']){
-            retries = args['retries'] + 1;
-        }
-
-        if (Number(retries) < 5){
-
-            // no photos, try another query
-
-            if (rsp['error']['code'] == 2){        
-                _self.log("retry search #" + retries);
-                _self.photosSearchRandom({'retries' : retries});
-                return;
-            }
-
-            // no photos, post filter - try next page
-            
-            if (rsp['error']['code'] == 3){
-                _self.log("retry search w/page " + page + " #" + retries);
-                _self.photosSearchRandom({'page' : page, 'retries' : retries});
-                return;
-            }
-        }
-
-        var html = '<p id="problem">';
-        html += 'Ack! Bad craziness on the Information Superhighway means there are no photos to display!!';
-        html += '</p>'
-
-        $("#options").html(html);
-        return;
+        $("#options").html("Ack! Bad craziness on the Information Superhighway means there are no photos to display!!");
+        _self.log("photos search random failed!");
     };
 
-    var api_args = {};
+    // fix me: pagination...
 
-    if (args['page']){
-        api_args['page'] = args['page'];
-    }
-
-    this.api.api_call('random', api_args, _doThisOnSuccess, _doThisIfNot);
+    this.api.api_call('random', { }, _doThisOnSuccess, _doThisIfNot);
 }
 
 info.aaronland.geosuggestions.Chooser.prototype.loadPhotoRandom = function(photo){
@@ -430,7 +340,6 @@ info.aaronland.geosuggestions.Chooser.prototype.Geocode = function(photo_id){
         return false;
     }
 
-    var _self = this;
     var map = window.iamheremap;
 
     _doThisOnSuccess = function(rsp){
@@ -444,13 +353,6 @@ info.aaronland.geosuggestions.Chooser.prototype.Geocode = function(photo_id){
         var s = $("#suggestify");
         s.html(html);
         s.show();
-
-        if (_self.args['context'] == 'random'){
-
-            setTimeout(function(){ 
-            	_self.skip();
-            }, 2000);
-        }
     };
 
     _doThisIfNot = function(rsp){
@@ -488,13 +390,10 @@ info.aaronland.geosuggestions.Chooser.prototype.Geocode = function(photo_id){
         'latitude' : map.lat,
         'longitude' : map.lon,
         'accuracy' : map.zoom,
+        'woeid' : map.woeid,
         'geo_context' : context,
         'crumb' : this.args['suggest_crumb']
     };
-
-    if (map.woeid){
-        meth_args['woid'] = map.woeid;
-    }
 
     var api = new info.aaronland.geosuggestions.API(api_args);
     api.api_call('suggest', meth_args, _doThisOnSuccess, _doThisIfNot);
