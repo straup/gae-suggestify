@@ -6,22 +6,22 @@ if (! info.aaronland){
     info.aaronland = {};
 }
 
-if (! info.aaronland.geosuggestions){
-    info.aaronland.geosuggestions = {};
+if (! info.aaronland.suggestify){
+    info.aaronland.suggestify = {};
 }
 
-info.aaronland.geosuggestions.Blocked = function(args){
+info.aaronland.suggestify.Blocked = function(args){
     this.args = args;
 
     var api_args = {
-        'host' : this.args['geosuggestions_apihost'],
+        'host' : this.args['suggestify_apihost'],
         'enable_logging' : this.args['enable_logging']
     };
 
-    this.api = new info.aaronland.geosuggestions.API(api_args);
+    this.api = new info.aaronland.suggestify.API(api_args);
 };
 
-info.aaronland.geosuggestions.Blocked.prototype.unblock = function(user_id, username){
+info.aaronland.suggestify.Blocked.prototype.unblock = function(user_id, username){
 
     // @ symbols make jquery sad...
     var jquery_id = user_id.replace("@", "");

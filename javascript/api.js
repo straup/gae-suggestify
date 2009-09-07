@@ -6,19 +6,19 @@ if (! info.aaronland){
     info.aaronland = {};
 }
 
-if (! info.aaronland.geosuggestions){
-    info.aaronland.geosuggestions = {};
+if (! info.aaronland.suggestify){
+    info.aaronland.suggestify = {};
 }
 
-info.aaronland.geosuggestions.JSON = (typeof(JSON) == 'object') ? 1 : 0;
+info.aaronland.suggestify.JSON = (typeof(JSON) == 'object') ? 1 : 0;
 
-info.aaronland.geosuggestions.API = function(args){
+info.aaronland.suggestify.API = function(args){
     this.args = args;
 
     this.host = args['host'];
     this.endpoint = '/api';   
 
-    if (! info.aaronland.geosuggestions.JSON){
+    if (! info.aaronland.suggestify.JSON){
 
         this.log("no native JSON parser, loading pure-js version");
 
@@ -29,17 +29,17 @@ info.aaronland.geosuggestions.API = function(args){
         var head = document.getElementsByTagName("head").item(0);
         head.appendChild(script);
         
-        info.aaronland.geosuggestions.JSON = 1;
+        info.aaronland.suggestify.JSON = 1;
     }
 
 };
 
-info.aaronland.geosuggestions.API.prototype.api_call = function(method, args, doThisOnSuccess, doThisIfNot){
+info.aaronland.suggestify.API.prototype.api_call = function(method, args, doThisOnSuccess, doThisIfNot){
 
     var _self = this;
 
     var req = new XMLHttpRequest();
-    var url = this.host + this.endpoint;
+    var url = this.host + this.endpoint + '/' + encodeURIComponent(method); 
 
     var params = new Array();
     params.push('method=' + encodeURIComponent(method));
@@ -117,7 +117,7 @@ info.aaronland.geosuggestions.API.prototype.api_call = function(method, args, do
     this.log("api call dispatched");
 };
 
-info.aaronland.geosuggestions.API.prototype.log = function(msg){
+info.aaronland.suggestify.API.prototype.log = function(msg){
 
     if (! this.args['enable_logging']){
         return;

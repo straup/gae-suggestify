@@ -10,27 +10,27 @@ if (! info.aaronland){
     info.aaronland = {};
 }
 
-if (! info.aaronland.geosuggestions){
-    info.aaronland.geosuggestions = {};
+if (! info.aaronland.suggestify){
+    info.aaronland.suggestify = {};
 }
 
-info.aaronland.geosuggestions.Buddyicon = function(args){
+info.aaronland.suggestify.Buddyicon = function(args){
     this.args = args;
     this.rsp = null;
 
     this.cache = {};
 
     var api_args = {
-        'host' : this.args['geosuggestions_apihost'],
+        'host' : this.args['suggestify_apihost'],
         'enable_logging' : this.args['enable_logging']
     };
 
     // hey look, we're using the local flickr proxy cache api
 
-    this.api = new info.aaronland.geosuggestions.API(api_args);
+    this.api = new info.aaronland.suggestify.API(api_args);
 };
 
-info.aaronland.geosuggestions.Buddyicon.prototype.fetch = function(nsid, id){
+info.aaronland.suggestify.Buddyicon.prototype.fetch = function(nsid, id){
 
     this.log("fetch buddyicon for " + nsid);
  
@@ -71,7 +71,7 @@ info.aaronland.geosuggestions.Buddyicon.prototype.fetch = function(nsid, id){
     return;
 };
 
-info.aaronland.geosuggestions.Buddyicon.prototype.draw = function(nsid, id, buddyicon_url){
+info.aaronland.suggestify.Buddyicon.prototype.draw = function(nsid, id, buddyicon_url){
 
         var html = '<a href="http://www.flickr.com/photos/' + escape(nsid) + '">';
         html += '<img src="' + buddyicon_url + '" height="32" width="32" alt="buddyicon" />';
@@ -80,7 +80,7 @@ info.aaronland.geosuggestions.Buddyicon.prototype.draw = function(nsid, id, budd
         $("#" + id).html(html);
 };
 
-info.aaronland.geosuggestions.Buddyicon.prototype.log = function(msg){
+info.aaronland.suggestify.Buddyicon.prototype.log = function(msg){
 
     if (! this.args['enable_logging']){
         return;

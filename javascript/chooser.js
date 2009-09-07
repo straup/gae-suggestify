@@ -7,24 +7,24 @@ if (! info.aaronland){
 }
 
 if (! info.aaronland.info){
-    info.aaronland.geosuggestions = {};
+    info.aaronland.suggestify = {};
 }
 
-info.aaronland.geosuggestions.Chooser = function(args){
+info.aaronland.suggestify.Chooser = function(args){
     this.args = args;
     this.rsp = null;
     this.search_index = null;
     this.current_index = null;
 
     var api_args = {
-        'host' : this.args['geosuggestions_apihost'],
+        'host' : this.args['suggestify_apihost'],
         'enable_logging' : this.args['enable_logging']
     };
 
-    this.api = new info.aaronland.geosuggestions.API(api_args);
+    this.api = new info.aaronland.suggestify.API(api_args);
 };
 
-info.aaronland.geosuggestions.Chooser.prototype.lookupNSID = function(username){
+info.aaronland.suggestify.Chooser.prototype.lookupNSID = function(username){
 
     var _self = this;
 
@@ -60,7 +60,7 @@ info.aaronland.geosuggestions.Chooser.prototype.lookupNSID = function(username){
     this.api.api_call(method, params, _doThisOnSuccess, _doThisIfNot);
 };
 
-info.aaronland.geosuggestions.Chooser.prototype.photosSearch = function(args){
+info.aaronland.suggestify.Chooser.prototype.photosSearch = function(args){
 
     var _self = this;
 
@@ -170,7 +170,7 @@ info.aaronland.geosuggestions.Chooser.prototype.photosSearch = function(args){
     this.api.api_call('search', { 'user_id' : args['nsid'], 'page' : args['page'] }, _doThisOnSuccess, _doThisIfNot);
 };
 
-info.aaronland.geosuggestions.Chooser.prototype.photosSearchRandom = function(){
+info.aaronland.suggestify.Chooser.prototype.photosSearchRandom = function(){
 
     var _self = this;
 
@@ -206,7 +206,7 @@ info.aaronland.geosuggestions.Chooser.prototype.photosSearchRandom = function(){
     this.api.api_call('random', { }, _doThisOnSuccess, _doThisIfNot);
 }
 
-info.aaronland.geosuggestions.Chooser.prototype.loadPhotoRandom = function(photo){
+info.aaronland.suggestify.Chooser.prototype.loadPhotoRandom = function(photo){
 
     	this.loadPhoto(photo);
 
@@ -226,7 +226,7 @@ info.aaronland.geosuggestions.Chooser.prototype.loadPhotoRandom = function(photo
         return;
 };
 
-info.aaronland.geosuggestions.Chooser.prototype.loadPhoto = function(photo){
+info.aaronland.suggestify.Chooser.prototype.loadPhoto = function(photo){
 
     if (typeof(photo) != 'object'){
         photo = this.get_photo_by_photoid(photo);
@@ -278,7 +278,7 @@ info.aaronland.geosuggestions.Chooser.prototype.loadPhoto = function(photo){
     $("#foo").html(html);
 };
 
-info.aaronland.geosuggestions.Chooser.prototype.promptGeocode = function(photo_id, crumb){
+info.aaronland.suggestify.Chooser.prototype.promptGeocode = function(photo_id, crumb){
 
     $("#suggestify").hide();
     $("#placemaker").hide();
@@ -321,7 +321,7 @@ info.aaronland.geosuggestions.Chooser.prototype.promptGeocode = function(photo_i
     $("#confirmify").html(html);
 };
 
-info.aaronland.geosuggestions.Chooser.prototype.resetPromptGeocode = function(photo_id){
+info.aaronland.suggestify.Chooser.prototype.resetPromptGeocode = function(photo_id){
 
     $("#confirmify").html("");
     $("#suggestify").show();
@@ -331,7 +331,7 @@ info.aaronland.geosuggestions.Chooser.prototype.resetPromptGeocode = function(ph
     return;
 };
 
-info.aaronland.geosuggestions.Chooser.prototype.Geocode = function(photo_id){
+info.aaronland.suggestify.Chooser.prototype.Geocode = function(photo_id){
 
     var photo = this.get_photo_by_photoid(photo_id);
 
@@ -378,7 +378,7 @@ info.aaronland.geosuggestions.Chooser.prototype.Geocode = function(photo_id){
     };
 
     var api_args = {
-        'host' : this.args['geosuggestions_apihost'],
+        'host' : this.args['suggestify_apihost'],
         'enable_logging' : this.args['enable_logging']
     };
 
@@ -395,14 +395,17 @@ info.aaronland.geosuggestions.Chooser.prototype.Geocode = function(photo_id){
         'crumb' : this.args['suggest_crumb']
     };
 
-    var api = new info.aaronland.geosuggestions.API(api_args);
+    var api = new info.aaronland.suggestify.API(api_args);
     api.api_call('suggest', meth_args, _doThisOnSuccess, _doThisIfNot);
 
     $("#confirmify").html('<span class="whirclick">whir! click!!</span>');
     return;
 };
 
-info.aaronland.geosuggestions.Chooser.prototype.queryPlacemaker = function(photo_id){
+// please to fix me to use info.aaronland.geo.Geocoder (placemaker)
+// which is loaded by the iamheremap (20090907/asc)
+
+info.aaronland.suggestify.Chooser.prototype.queryPlacemaker = function(photo_id){
 
     // http://icant.co.uk/jsplacemaker/
 
@@ -470,7 +473,7 @@ info.aaronland.geosuggestions.Chooser.prototype.queryPlacemaker = function(photo
     this.log('placemaker query dispatched');
 };
 
-info.aaronland.geosuggestions.Chooser.prototype.generatePhotoUID = function(photo, sz){
+info.aaronland.suggestify.Chooser.prototype.generatePhotoUID = function(photo, sz){
 
     var uid = "photo_" + photo.id;
 
@@ -481,7 +484,7 @@ info.aaronland.geosuggestions.Chooser.prototype.generatePhotoUID = function(phot
     return uid;
 };
 
-info.aaronland.geosuggestions.Chooser.prototype.skip = function(photo_id){
+info.aaronland.suggestify.Chooser.prototype.skip = function(photo_id){
 
     this.log("skip " + photo_id);
 
@@ -496,7 +499,7 @@ info.aaronland.geosuggestions.Chooser.prototype.skip = function(photo_id){
     this.loadPhotoRandom(photo);
 };
 
-info.aaronland.geosuggestions.Chooser.prototype.noIdea = function(photo_id){
+info.aaronland.suggestify.Chooser.prototype.noIdea = function(photo_id){
 
     this.log("no idea where " + photo_id + " is");
 
@@ -514,7 +517,7 @@ info.aaronland.geosuggestions.Chooser.prototype.noIdea = function(photo_id){
     this.skip(photo_id);
 };
 
-info.aaronland.geosuggestions.Chooser.prototype.build_search_index = function(rsp){
+info.aaronland.suggestify.Chooser.prototype.build_search_index = function(rsp){
 
     this.search_index = {};
     this.current_index = null;
@@ -529,7 +532,7 @@ info.aaronland.geosuggestions.Chooser.prototype.build_search_index = function(rs
     return i;
 };
 
-info.aaronland.geosuggestions.Chooser.prototype.get_photo_by_offset = function(idx){
+info.aaronland.suggestify.Chooser.prototype.get_photo_by_offset = function(idx){
 
     this.log("get photo by offset: " + String(idx));
 
@@ -544,7 +547,7 @@ info.aaronland.geosuggestions.Chooser.prototype.get_photo_by_offset = function(i
     return photo;
 }
 
-info.aaronland.geosuggestions.Chooser.prototype.get_photo_by_photoid = function(photo_id){
+info.aaronland.suggestify.Chooser.prototype.get_photo_by_photoid = function(photo_id){
 
     this.log("get photo by id: " + String(photo_id));
 
@@ -565,7 +568,7 @@ info.aaronland.geosuggestions.Chooser.prototype.get_photo_by_photoid = function(
     return photo;
 };
 
-info.aaronland.geosuggestions.Chooser.prototype.log = function(msg){
+info.aaronland.suggestify.Chooser.prototype.log = function(msg){
 
     if (! this.args['enable_logging']){
         return;

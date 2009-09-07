@@ -6,11 +6,11 @@ if (! info.aaronland){
     info.aaronland = {};
 }
 
-if (! info.aaronland.geosuggestions){
-    info.aaronland.geosuggestions = {};
+if (! info.aaronland.suggestify){
+    info.aaronland.suggestify = {};
 }
 
-info.aaronland.geosuggestions.Review = function(args){
+info.aaronland.suggestify.Review = function(args){
     this.args = args;
     this.rsp = null;
 
@@ -22,14 +22,14 @@ info.aaronland.geosuggestions.Review = function(args){
     this.flickr = new info.aaronland.flickr.API(flickr_args);
 
     var api_args = {
-        'host' : this.args['geosuggestions_apihost'],
+        'host' : this.args['suggestify_apihost'],
         'enable_logging' : this.args['enable_logging']
     };
 
-    this.api = new info.aaronland.geosuggestions.API(api_args);
+    this.api = new info.aaronland.suggestify.API(api_args);
 };
 
-info.aaronland.geosuggestions.Review.prototype.approve = function(suggestion_id, photo_id){
+info.aaronland.suggestify.Review.prototype.approve = function(suggestion_id, photo_id){
 
     var _self = this;
 
@@ -86,7 +86,7 @@ info.aaronland.geosuggestions.Review.prototype.approve = function(suggestion_id,
     return;    
 };
 
-info.aaronland.geosuggestions.Review.prototype.reject = function(suggestion_id){
+info.aaronland.suggestify.Review.prototype.reject = function(suggestion_id){
 
     var _doThisOnSuccess = function(rsp){
 
@@ -125,7 +125,7 @@ info.aaronland.geosuggestions.Review.prototype.reject = function(suggestion_id){
     return;    
 };
 
-info.aaronland.geosuggestions.Review.prototype.block = function(suggestion_id, suggestor_id){
+info.aaronland.suggestify.Review.prototype.block = function(suggestion_id, suggestor_id){
 
     var _doThisOnSuccess = function(rsp){
         location.href = "/review?block=done";
@@ -158,7 +158,7 @@ info.aaronland.geosuggestions.Review.prototype.block = function(suggestion_id, s
     this.showWhirClick(suggestion_id);
 };
 
-info.aaronland.geosuggestions.Review.prototype.showWhirClick = function(suggestion_id){
+info.aaronland.suggestify.Review.prototype.showWhirClick = function(suggestion_id){
     $("#approve_" + suggestion_id).hide();
     $("#reject_" + suggestion_id).hide();
     $("#tweak_" + suggestion_id).hide();
@@ -167,13 +167,13 @@ info.aaronland.geosuggestions.Review.prototype.showWhirClick = function(suggesti
     $("#whirclick_" + suggestion_id).show();
 };
 
-info.aaronland.geosuggestions.Review.prototype.showMap = function(lat, lon, zoom){
+info.aaronland.suggestify.Review.prototype.showMap = function(lat, lon, zoom){
     window.iamheremap.goTo(lat, lon, zoom);
     $("#iamheremap_reviewcontainer").show();
     $("#iamheremap_review").show();
 };
 
-info.aaronland.geosuggestions.Review.prototype.hideMap = function(){
+info.aaronland.suggestify.Review.prototype.hideMap = function(){
     $("#iamheremap_reviewcontainer").hide();
     $("#iamheremap_review").hide();
 };
