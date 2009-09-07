@@ -61,7 +61,7 @@ $(document).ready(function(){
    };
 
    var chooser_args = {
-		'geosuggestions_apihost' : '{{ host_url|escape }}',
+		'suggestify_apihost' : '{{ host_url|escape }}',
   		'flickr_apikey' : '{{ config.flickr_apikey|escape }}',
 		'placemaker_apikey' : '{{ config.placemaker_apikey|escape }}',
 		'enable_logging' : {{ config.javascript_logging|escape }},
@@ -69,14 +69,14 @@ $(document).ready(function(){
    };
 
    window.iamheremap = new info.aaronland.iamhere.Map('iamheremap', map_args);
-   window.chooser = new info.aaronland.geosuggestions.Chooser(chooser_args);
+   window.chooser = new info.aaronland.suggestify.Chooser(chooser_args);
 
    var buddyicon_args = {
-		'geosuggestions_apihost' : '{{ host_url|escape }}',
+		'suggestify_apihost' : '{{ host_url|escape }}',
 		'enable_logging' : {{ config.javascript_logging|escape }},
    };
 
-   window.buddyicon = new info.aaronland.geosuggestions.Buddyicon(buddyicon_args);
+   window.buddyicon = new info.aaronland.suggestify.Buddyicon(buddyicon_args);
 	
    chooser.lookupNSID(username);
 });

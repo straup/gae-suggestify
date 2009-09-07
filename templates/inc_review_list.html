@@ -14,7 +14,7 @@
 $(document).ready(function(){ 
 
    var review_args = {
-		'geosuggestions_apihost' : '{{ host_url|escape }}',
+		'suggestify_apihost' : '{{ host_url|escape }}',
                 'flickr_apikey' : '{{ config.flickr_apikey|escape }}',
 		'enable_logging' : {{ config.javascript_logging|escape }},
 		'approve_crumb' : '{{ approve_crumb|escape }}',
@@ -22,14 +22,14 @@ $(document).ready(function(){
 		'block_crumb' : '{{ block_crumb|escape }}',
    };
 
-   window.review = new info.aaronland.geosuggestions.Review(review_args);
+   window.review = new info.aaronland.suggestify.Review(review_args);
 
    var buddyicon_args = {
-		'geosuggestions_apihost' : '{{ host_url|escape }}',
+		'suggestify_apihost' : '{{ host_url|escape }}',
 		'enable_logging' : {{ config.javascript_logging|escape }},
    };
 
-   window.buddyicon = new info.aaronland.geosuggestions.Buddyicon(buddyicon_args);
+   window.buddyicon = new info.aaronland.suggestify.Buddyicon(buddyicon_args);
 	
    // local cache for WOE lookups
 

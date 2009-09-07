@@ -60,17 +60,17 @@ $(document).ready(function(){
    };
 
    var chooser_args = {
-		'geosuggestions_apihost' : '{{ host_url|escape }}',
+		'suggestify_apihost' : '{{ host_url|escape }}',
   		'flickr_apikey' : '{{ config.flickr_apikey|escape }}',
 		'placemaker_apikey' : '{{ config.placemaker_apikey|escape }}',
 		'enable_logging' : {{ config.javascript_logging|escape }},
 		'suggest_crumb' : '{{ suggest_crumb|escape }}',
-		'noidea_crumb' : '{{ noidea_crumb|escape }}',
-		'context' : 'random',
+		// 'noidea_crumb' : '{{ noidea_crumb|escape }}',
+		// 'context' : 'random',
    };
 
    window.iamheremap = new info.aaronland.iamhere.Map('iamheremap', map_args);
-   window.chooser = new info.aaronland.geosuggestions.Chooser(chooser_args);
+   window.chooser = new info.aaronland.suggestify.Chooser(chooser_args);
 	
    chooser.photosSearchRandom();
 });

@@ -8,14 +8,14 @@
 $(document).ready(function(){ 
 
    var notify_args = {
-		'geosuggestions_apihost' : '{{ host_url|escape }}',
+		'suggestify_apihost' : '{{ host_url|escape }}',
 		'enable_logging' : {{ config.javascript_logging|escape }},
 		'email_enable_crumb' : '{{ email_enable_crumb|escape }}',
 		'email_change_crumb' : '{{ email_enable_crumb|escape }}',
 		'email_disable_crumb' : '{{ email_disable_crumb|escape }}',
    };
 
-   window.notify = new info.aaronland.geosuggestions.Notifications(notify_args);
+   window.notify = new info.aaronland.suggestify.Notifications(notify_args);
 
 });
 

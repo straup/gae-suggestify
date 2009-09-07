@@ -14,7 +14,7 @@ $(document).ready(function(){
 	'user_id' : '{{ user.nsid|escape }}',
     };
 
-    api = new info.aaronland.geosuggestions.API(api_args);
+    api = new info.aaronland.suggestify.API(api_args);
 
 {% if not user.buddyicon_url %}
 

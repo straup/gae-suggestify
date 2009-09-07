@@ -10,19 +10,19 @@
 $(document).ready(function(){ 
 
    var blocked_args = {
-		'geosuggestions_apihost' : '{{ host_url|escape }}',
+		'suggestify_apihost' : '{{ host_url|escape }}',
 		'enable_logging' : {{ config.javascript_logging|escape }},
 		'unblock_crumb' : '{{ unblock_crumb|escape }}',
    };
 
-   window.blocked = new info.aaronland.geosuggestions.Blocked(blocked_args);
+   window.blocked = new info.aaronland.suggestify.Blocked(blocked_args);
 
    var api_args = {
    	'host' : '{{ host_url|escape }}',
 	'enable_logging' : {{ config.javascript_logging|escape }},
    };
 
-   var api = new info.aaronland.geosuggestions.API(api_args);
+   var api = new info.aaronland.suggestify.API(api_args);
 
    {% for u in blocked_users %}
 
