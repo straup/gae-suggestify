@@ -4,7 +4,7 @@ class LoginHandler (suggestify.Request) :
     
     def get (self) :
 
-        if self.check_logged_in() :
+        if self.check_logged_in(self.min_perms) :
             self.redirect("/")
 
         self.do_flickr_auth(self.min_perms, '/')
@@ -14,7 +14,7 @@ class LogoutHandler (suggestify.Request) :
 
     def post (self) :
 
-        if not self.check_logged_in() :
+        if not self.check_logged_in(self.min_perms) :
             self.redirect("/")
 
         crumb = self.request.get('crumb')
