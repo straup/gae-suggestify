@@ -1,13 +1,73 @@
-1) You will need to suck down FlickrApp and stick it in the root.
+(THIS IS INCOMPLETE)
 
-2) Someday APIApp will have it's own package on github, etc. It might also
-   become part of the default FlickrApp package.
+--
 
-3) A lot of the stuff in geosuggestions/__init__.py will become part of the
-   FlickrApp core. That's sitting on my laptop right now because I don't feel
-   like doing Git Yoga.
+Some things we take for granted:
 
-4) This might actually be a very broken build. The jQuery ribbon thingy really
-   kind of sucks, but I don't feel like writing one from scratch right now.
+* The suggestor is not actually notified when a suggestion is approved or
+  rejected.
 
-5) Uh. Stuff. With things.
+* So far, the site relies on both the suggestor and the photographer knowing
+  about a suggestion. I've given some thought to allowing the site to post
+  comments (on a photographer's page) on behalf of a suggestor saying that
+  there's a pending suggestion. This has the potential to be spamtastic so I
+  haven't done it yet.
+
+--
+
+Things that still need to be done:
+
+* Pagination, anywhere and everywhere. This includes the ribbon/carousel which
+  isn't smart enough to fetch new photos when it reaches the end of the list.
+
+* Removing photos from the ribbon when they are selected for a suggestion.
+
+* Keeping a local store of photos that are known to have been suggested and are
+  pending approval for filtering the list of photos that come back in searches,
+  etc.
+
+* Keeping a local store of photos that are known to be geotagged for filtering
+  the list of photos that come back in searches, etc.
+
+* "Corrections" support for the reverse geocoding.
+
+* The "show me on a map" modal dialog is truly awful. At a minimum the
+  positioning should be made to work.
+
+* The ability to query for anything other than a single user, like tags.
+
+* Likewise, the code should be able to pull in the list of contacts for a user.
+
+* Notifications via XMPP?
+
+* Any kind of testing in IE
+
+--
+
+If you want to run this locally, you will need to create your own Flickr API key
+(and secret) and plug them in to config.py (start with config.sample.py).
+
+Suggestify requires Flickr "web" auth so when you set up your API key be sure to
+configure the callback URL to point to your local instance of AppEngine running
+the code.
+
+--
+
+The library layout is still a bit of a mess.
+
+This is equal parts a function of the app (still) growing organically and my
+inability to ever really understand how the hell Python interprets (package)
+names and imports stuff. Mostly it just makes me angry and then I am unable to
+actually imagine a useful solution.
+
+--
+
+Third-party libraries this code uses:
+
+* jQuery
+
+* gae-FlickrApp
+
+* gae-APIApp
+
+* js-iamheremap
