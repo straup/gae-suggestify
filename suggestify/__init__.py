@@ -15,6 +15,8 @@ class Request (FlickrAppRequest) :
         FlickrAppRequest.__init__(self, config)
 
         logging.basicConfig(level=logging.INFO)
+
+        self.settings = None
         
     def check_logged_in (self, min_perms) :
 
@@ -22,8 +24,8 @@ class Request (FlickrAppRequest) :
             return False
 
         settings = Settings.get_settings_for_user(self.user.nsid)
-        self.user.settings = settings
-
+        self.settings = settings
+        
         return True
       
     def default_geoperms (self) :
