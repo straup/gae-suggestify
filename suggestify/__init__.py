@@ -2,9 +2,6 @@ from config import config
 import suggestify.Settings as Settings
 
 from FlickrApp.Handlers import FlickrAppRequest
-from FlickrApp.ext.Flickr import API as flickr
-
-from google.appengine.api import memcache
 
 import logging
 
