@@ -1,14 +1,24 @@
-from FlickrApp.Handlers import FlickrAppRequest
 from config import config
-
 import suggestify.Settings as Settings
+
+from FlickrApp.Handlers import FlickrAppRequest
+from FlickrApp.ext.Flickr import API as flickr
 
 from google.appengine.api import memcache
 
+import logging
+
 class Request (FlickrAppRequest) :
-    def __init__ (self) :
+
+    def __init__ (self, min_perms=None) :
+        
+        if min_perms :
+            config['flickr_minperms'] = min_perms
+            
         FlickrAppRequest.__init__(self, config)
-                
+
+        logging.basicConfig(level=logging.INFO)
+        
     def check_logged_in (self, min_perms) :
 
         if not FlickrAppRequest.check_logged_in(self, min_perms) :
@@ -19,28 +29,18 @@ class Request (FlickrAppRequest) :
 
         return True
       
-  def default_geoperms (self) :
+    def default_geoperms (self) :
 
-    method = 'flickr.prefs.getGeoPerms'
-    args = {'auth_token' : self.user.token}                 
-    ttl = 14
+        method = 'flickr.prefs.getGeoPerms'
+        args = {'auth_token' : self.user.token}                 
+        ttl = (60 * 60 * 24) * 1
         
-    rsp = self.proxy_api_call(method, args, ttl)
-    return rsp['person']['geoperms']
-
-  def proxy_api_call (self, method, args, ttl=0) :
-
-    sig = Flickr.API.sign_args(method, args)
+        rsp = self.proxy_api_call(method, args, ttl)
+        return rsp['person']['geoperms']
     
-    memkey = "%s_%s" % (method, sig)
-    cache = memcache.get(memkey)
+    def log (self, msg, level='info') :
 
-    if cache :
-      return cache
-
-    rsp = self.api_call(method, args)
-
-    if rsp['stat'] == 'ok' :
-      memcache.add(memkey, rsp, ttl)
-
-    return rsp
+        try :
+            getattr(logging, level)("[suggestify] %s" % msg)
+        except Exception, e:
+            logging.error("Can't even log messages! Tried to %s (with %s) and got: " % (level, msg, e))
