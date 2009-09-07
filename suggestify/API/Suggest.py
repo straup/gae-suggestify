@@ -100,6 +100,10 @@ class SuggestHandler (suggestify.API.Request) :
         s = Suggestion.create(args)
         
         if not s :
+
+            msg = "failed to add suggestion for %s" % str(args)
+            self.log(msg, 'warning')
+            
             self.api_error(2, 'There was a problem recording your suggestion.')
             return
 
@@ -137,4 +141,3 @@ Cheers,
         
         self.api_ok()
         return
-        
