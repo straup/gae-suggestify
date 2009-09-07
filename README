@@ -40,6 +40,11 @@ Things that still need to be done:
 
 * Notifications via XMPP?
 
+* Lots of finnicky positioning/float bugs
+
+* If a user clicks suggest me while a location is being reverse geocoded (but
+  has not returned a WOE ID) should the call to add the suggestion be deferred?
+
 * Any kind of testing in IE
 
 --
