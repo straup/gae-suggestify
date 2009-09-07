@@ -3,39 +3,72 @@
 import wsgiref.handlers
 from google.appengine.ext import webapp
 
-from geosuggestions.Main import MainHandler
-from geosuggestions.Frob import FrobHandler
-from geosuggestions.Chooser import ChooserHandler
-from geosuggestions.Blocked import BlockedHandler
-from geosuggestions.Review import ReviewHandler
-from geosuggestions.Allow import AllowHandler
-from geosuggestions.Deny import DenyHandler
-from geosuggestions.Auth import LogoutHandler, LoginHandler
-from geosuggestions.About import AboutHandler
-from geosuggestions.Random import RandomHandler
-from geosuggestions.Settings import SettingsHandler, NotificationsHandler, EmailNotificationsConfirmHandler
-from geosuggestions.API import APIHandler
+# (this is just me being snarky, please see the notes in the README...)
+
+# from ifuckinghateyoupython import *
+
+from suggestify.Main import MainHandler
+from suggestify.Frob import FrobHandler
+from suggestify.Chooser import ChooserHandler
+from suggestify.Blocked import BlockedHandler
+from suggestify.Review import ReviewHandler
+from suggestify.Allow import AllowHandler
+from suggestify.Deny import DenyHandler
+from suggestify.Auth import LogoutHandler, LoginHandler
+from suggestify.About import AboutHandler
+from suggestify.Prefs import PrefsHandler, NotificationsHandler, EmailNotificationsConfirmHandler
+
+# My hate has an API...
+
+import suggestify.API.Suggest
+import suggestify.API.Approve
+import suggestify.API.Reject
+import suggestify.API.Block
+import suggestify.API.PeopleInfo
+import suggestify.API.Email
+import suggestify.API.Flickr
+import suggestify.API.Search
 
 if __name__ == '__main__':
 
+  # It's like writing header files for web apps or something...
+  
   handlers = [
+
     ('/', MainHandler),
+    ('/faq', AboutHandler),
+    ('/about', AboutHandler),
+    
     ('/signout', LogoutHandler),
     ('/signin', LoginHandler),    
     ('/auth', FrobHandler),
+
     (r'/chooser(?:/(user|photo|random)(?:/(.*))?)?', ChooserHandler),
     (r'/review(?:/(\d+))?', ReviewHandler),
     (r'/review(?:/(page\d+))?', ReviewHandler),    
-    ('/blocked', BlockedHandler),    
+
     ('/allow', AllowHandler),
     ('/deny', DenyHandler),
-    ('/api', APIHandler),
-    ('/about', AboutHandler),
-    ('/settings', SettingsHandler),
+    ('/blocked', BlockedHandler),
+    
+    ('/settings', PrefsHandler),
     ('/settings/notifications', NotificationsHandler),  
     (r'/confirm/e/(.*)', EmailNotificationsConfirmHandler),
-    ('/random', RandomHandler),
-    ('/faq', AboutHandler),
+
+    ('/api/suggest', suggestify.API.Suggest.SuggestHandler),
+    ('/api/approve', suggestify.API.Approve.ApproveHandler),
+    ('/api/reject', suggestify.API.Reject.RejectHandler),
+    ('/api/block', suggestify.API.Block.BlockHandler),        
+    ('/api/unblock', suggestify.API.Block.UnBlockHandler),
+    ('/api/buddyicon', suggestify.API.PeopleInfo.BuddyiconHandler),
+    ('/api/pathalias', suggestify.API.PeopleInfo.PathAliasHandler),
+    ('/api/enable_email', suggestify.API.Email.EmailEnableHandler),
+    ('/api/disable_email', suggestify.API.Email.EmailDisableHandler),    
+    ('/api/flickr.photos.getInfo', suggestify.API.Flickr.PhotoGetInfoHandler),
+    ('/api/flickr.people.getInfo', suggestify.API.Flickr.PeopleGetInfoHandler),
+    ('/api/flickr.places.getInfo', suggestify.API.Flickr.PlacesGetInfoHandler),        
+    ('/api/flickr.people.findByUsername', suggestify.API.Flickr.FindByUsernameHandler),        
+    ('/api/search', suggestify.API.Search.SearchForUserHandler),
   ]
   
   application = webapp.WSGIApplication(handlers, debug=True)
