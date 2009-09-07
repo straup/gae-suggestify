@@ -1,4 +1,6 @@
 config = {
+
+    'flickr_minperms' : 'read',
     
     'flickr_apikey' : 'FLICKR_APIKEY',
     'flickr_apisecret' : 'FLICKR_APISECRET',
