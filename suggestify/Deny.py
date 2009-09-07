@@ -18,7 +18,7 @@ class DenyHandler (suggestify.Request) :
 
   def post (self) :
     
-    if not self.check_logged_in() :
+    if not self.check_logged_in(self.min_perms) :
       self.do_flickr_auth()
       return
 
@@ -37,11 +37,8 @@ class DenyHandler (suggestify.Request) :
       self.display('deny.html')
       return
 
-    # FIX ME ...
-    # this is kind of stupid to be an object method ...
+    Membership.opt_out(self.user.nsid)
     
-    self.set_opt_out(True)    
-
     Suggestion.reject_all_pending_suggestions_for_owner(self.user.nsid)
     
     self.assign('done', 1)

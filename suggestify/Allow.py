@@ -36,8 +36,7 @@ class AllowHandler (suggestify.Request) :
       self.display('allow.html')
       return
 
-    # Again ... this is stupid
-    self.set_opt_out(False)
+    Membership.opt_in(self.user.nsid)
 
     self.assign('done', 1)
     self.display('allow.html')    
