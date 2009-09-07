@@ -1,14 +1,14 @@
-import suggestify
+import suggestify.API
 
-class Request (suggestify.API.Request) :
+class EchoHandler (suggestify.API.Request) :
 
-    def run (self, ctx) :
+    def run (self) :
 
         params = { 'param' : [] }
         
-        for arg in ctx.request.arguments() :
-            params['param'].append({arg : ctx.request.get(arg)})
+        for arg in self.request.arguments() :
+            params['param'].append({arg : self.request.get(arg)})
             
-        ctx.api_ok({'params' : params} )
+        self.api_ok({'params' : params} )
         return
 

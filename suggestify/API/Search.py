@@ -1,4 +1,5 @@
-from geosuggestions.API.Core import CoreHandler
+import suggestify.API
+
 import FlickrApp.User.Membership as Membership
 import FlickrApp.User.Blocked as Blocked
 from google.appengine.ext import db
@@ -6,17 +7,17 @@ from google.appengine.ext import db
 import random
 import time
 
-class SearchRandomByContactsHandler (CoreHandler) :
+class SearchRandomByContactsHandler (suggestify.API.Request) :
 
-    def run (self, ctx) :
+    def run (self) :
 
-        if ctx.request.get('page') != '' :
-            page = ctx.request.get('page')
+        if self.request.get('page') != '' :
+            page = self.request.get('page')
 
         page = 1
 
-        if ctx.request.get('page') :
-            page = ctx.request.get('page')
+        if self.request.get('page') :
+            page = self.request.get('page')
             
         per_page = max(int(random.random() * 100), 25)
     
@@ -46,8 +47,8 @@ class SearchRandomByContactsHandler (CoreHandler) :
         method = 'flickr.photos.search'
         
         args = {
-            'auth_token' : ctx.user.token,
-            'user_id' : ctx.user.nsid,
+            'auth_token' : self.user.token,
+            'user_id' : self.user.nsid,
             'contacts' : contacts[0],
             'has_geo' : 0,
             'per_page' : per_page,
@@ -62,20 +63,20 @@ class SearchRandomByContactsHandler (CoreHandler) :
         rsp = self.proxy_api_call(method, args, ttl)
 
         # wrong and dirty, please to fix
-        ctx.format = 'json'
+        self.format = 'json'
             
         if not rsp or rsp['stat'] != 'ok' :
-            ctx.api_error(1, 'API call failed')
+            self.api_error(1, 'API call failed')
             return
         
         if rsp['photos']['total'] == 0 :
-            ctx.api_error(2, 'Retry, no photos for query');
+            self.api_error(2, 'Retry, no photos for query');
             return
 
         # these always time out on localhost...
         
-        if ctx.request.host.startswith("localhost") :
-            ctx.api_ok({'photos' : rsp['photos']})
+        if self.request.host.startswith("localhost") :
+            self.api_ok({'photos' : rsp['photos']})
             return
     
         skip_photos = []
@@ -88,13 +89,13 @@ class SearchRandomByContactsHandler (CoreHandler) :
         # please to memcache all of this...
             
         gql = "SELECT * FROM dbSuggestion WHERE suggestor_nsid = :1"
-        res = db.GqlQuery(gql, ctx.user.nsid)
+        res = db.GqlQuery(gql, self.user.nsid)
         
         for ph in res.fetch(res.count()) :
             skip_photos.append(ph.photo_id)
 
         gql = "SELECT * FROM dbGamesRandom WHERE suggestor_nsid = :1"
-        res = db.GqlQuery(gql, ctx.user.nsid)
+        res = db.GqlQuery(gql, self.user.nsid)
     
         for ph in res.fetch(res.count()) :
             unknown_photos.append(ph.photo_id)
@@ -123,7 +124,7 @@ class SearchRandomByContactsHandler (CoreHandler) :
             # has the photo owner blocked this user
         
             if not blocked_by.has_key(photo_owner) :
-                is_blocked = Blocked.is_user_blocked(ctx.user.nsid, photo_owner)
+                is_blocked = Blocked.is_user_blocked(self.user.nsid, photo_owner)
                 blocked_by[photo_owner] = is_blocked
 
             if blocked_by[photo_owner] :
@@ -132,32 +133,32 @@ class SearchRandomByContactsHandler (CoreHandler) :
             filtered.append(ph)
 
         if len(filtered) == 0 :
-            ctx.api_error(3, 'Retry, no photos post filter');   
+            self.api_error(3, 'Retry, no photos post filter');   
             return
         
         rsp['photos']['photo'] = filtered
 
-        ctx.api_ok({'photos' : rsp['photos']})
+        self.api_ok({'photos' : rsp['photos']})
         return
 
-class SearchForUserHandler (CoreHandler) :
+class SearchForUserHandler (suggestify.API.Request) :
 
-    def run (self, ctx) :
+    def run (self) :
         
         required = ('user_id',)
 
-        if not ctx.ensure_args(required) :
+        if not self.ensure_args(required) :
             return 
 
         per_page = 100
-        page = ctx.request.get('page')
+        page = self.request.get('page')
                        
         method = 'flickr.photos.search'
         
         args = {
-            'user_id' : ctx.request.get('user_id'),
+            'user_id' : self.request.get('user_id'),
             'has_geo' : 0,
-            'auth_token' : ctx.user.token,
+            'auth_token' : self.user.token,
             'extras' : 'tags,date_taken,owner_name',            
             'per_page' : per_page,
             'page' : page,
@@ -165,17 +166,17 @@ class SearchForUserHandler (CoreHandler) :
 
         ttl = 60 * 10;
 
-        rsp = ctx.proxy_api_call(method, args, ttl)
+        rsp = self.proxy_api_call(method, args, ttl)
         
         # wrong and dirty, please to fix
-        ctx.format = 'json'
+        self.format = 'json'
 
         if not rsp or rsp['stat'] != 'ok' :
-            ctx.api_error(1, 'API call failed')
+            self.api_error(1, 'API call failed')
             return
 
         if rsp['photos']['total'] == 0 :
-            ctx.api_ok()
+            self.api_ok()
             return
 
         # it's assumed you've checked that the logged in
@@ -186,7 +187,7 @@ class SearchForUserHandler (CoreHandler) :
         # please to memcache me...
         
         gql = "SELECT * FROM dbSuggestion WHERE suggestor_nsid=:1"
-        res = db.GqlQuery(gql, ctx.user.nsid)
+        res = db.GqlQuery(gql, self.user.nsid)
 
         skip_photos = []
         filtered = []
@@ -200,9 +201,9 @@ class SearchForUserHandler (CoreHandler) :
                 filtered.append(ph)
 
         if len(filtered) == 0 :
-            ctx.api_error(2, 'Retry, no photos for filter')
+            self.api_error(2, 'Retry, no photos for filter')
     
         rsp['photos']['photo'] = filtered
 
-        ctx.api_ok({'photos' : rsp['photos']})
+        self.api_ok({'photos' : rsp['photos']})
         return

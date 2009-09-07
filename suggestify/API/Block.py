@@ -1,48 +1,48 @@
-from geosuggestions.API.Core import CoreHandler
-import geosuggestions.Suggestion as dbSuggestion
+import suggestify
+import suggestify.Suggestion as Suggestion
 import FlickrApp.User.Blocked as Blocked
 
-class BlockHandler (CoreHandler) :
+class BlockHandler (suggestify.API.Request) :
 
-    def run (self, ctx) :
+    def run (self) :
 
         required = ('crumb', 'user_id')
 
-        if not ctx.ensure_args(required) :
+        if not self.ensure_args(required) :
             return 
 
-        if not ctx.ensure_crumb('method=block') :
+        if not self.ensure_crumb('method=block') :
             return
 
-        blocked_nsid = ctx.request.get('user_id')
-        blocker_nsid = ctx.user.nsid
+        blocked_nsid = self.request.get('user_id')
+        blocker_nsid = self.user.nsid
         
         # This will probably change
         
         Blocked.block_user(blocked_nsid, blocker_nsid)
 
-        dbSuggestion.reject_all_pending_suggestions_for_owner(blocker_nsid, blocked_nsid)
+        Suggestion.reject_all_pending_suggestions_for_owner(blocker_nsid, blocked_nsid)
         
-        ctx.api_ok()
+        self.api_ok()
         return
 
-class UnBlockHandler (CoreHandler) :
+class UnBlockHandler (suggestify.API.Request) :
 
-    def run (self, ctx) :
+    def run (self) :
 
         required = ('crumb', 'user_id')
 
-        if not ctx.ensure_args(required) :
+        if not self.ensure_args(required) :
             return 
 
-        if not ctx.ensure_crumb('method=unblock') :
+        if not self.ensure_crumb('method=unblock') :
             return
 
-        blocked_nsid = ctx.request.get('user_id')
+        blocked_nsid = self.request.get('user_id')
 
         # This will probably change
         
-        Blocked.unblock_user(blocked_nsid, ctx.user.nsid)
+        Blocked.unblock_user(blocked_nsid, self.user.nsid)
 
-        ctx.api_ok()
+        self.api_ok()
         return

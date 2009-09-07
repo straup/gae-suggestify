@@ -1,113 +1,113 @@
-from geosuggestions.API.Core import CoreHandler
+import suggestify.API
 
-class PlacesGetInfoHandler (CoreHandler) :
+class PlacesGetInfoHandler (suggestify.API.Request) :
 
-    def run (self, ctx) :
+    def run (self) :
 
         required = ('woe_id',)
 
-        if not ctx.ensure_args(required) :
+        if not self.ensure_args(required) :
             return 
 
         args = {
-            'woe_id' : ctx.request.get('woe_id'),
-            'auth_token' : ctx.user.token,
+            'woe_id' : self.request.get('woe_id'),
+            'auth_token' : self.user.token,
         }
 
         ttl = 60 * 60 * 14
         
-        rsp = ctx.proxy_api_call('flickr.places.getInfo', args, ttl)
+        rsp = self.proxy_api_call('flickr.places.getInfo', args, ttl)
 
         # wrong and dirty, please to fix
-        ctx.format = 'json'
+        self.format = 'json'
         
         if rsp['stat'] != 'ok' :
-            ctx.api_error(1, 'API call failed')
+            self.api_error(1, 'API call failed')
             return
 
-        ctx.api_ok({'place' : rsp['place']})
+        self.api_ok({'place' : rsp['place']})
         return
     
-class FindByUsernameHandler (CoreHandler) :
+class FindByUsernameHandler (suggestify.API.Request) :
 
-    def run (self, ctx) :
+    def run (self) :
 
         required = ('username',)
 
-        if not ctx.ensure_args(required) :
+        if not self.ensure_args(required) :
             return 
 
         args = {
-            'username' : ctx.request.get('username'),
-            'auth_token' : ctx.user.token,
+            'username' : self.request.get('username'),
+            'auth_token' : self.user.token,
         }
 
         ttl = 60 * 60 * 14
         
-        rsp = ctx.proxy_api_call('flickr.people.findByUsername', args, ttl)
+        rsp = self.proxy_api_call('flickr.people.findByUsername', args, ttl)
 
         # wrong and dirty, please to fix
-        ctx.format = 'json'
+        self.format = 'json'
         
         if rsp['stat'] != 'ok' :
-            ctx.api_error(1, 'API call failed')
+            self.api_error(1, 'API call failed')
             return
 
-        ctx.api_ok({'user' : rsp['user']})
+        self.api_ok({'user' : rsp['user']})
         return
         
-class PhotoGetInfoHandler (CoreHandler) :
+class PhotoGetInfoHandler (suggestify.API.Request) :
 
-    def run (self, ctx) :
+    def run (self) :
 
         required = ('photo_id', )
 
-        if not ctx.ensure_args(required) :
+        if not self.ensure_args(required) :
             return 
 
         args = {
-            'photo_id' : ctx.request.get('photo_id')
+            'photo_id' : self.request.get('photo_id')
         }
 
         ttl = 60 * 60
         
-        rsp = ctx.proxy_api_call('flickr.photos.getInfo', args, ttl)
+        rsp = self.proxy_api_call('flickr.photos.getInfo', args, ttl)
 
         # wrong and dirty, please to fix
-        ctx.format = 'json'
+        self.format = 'json'
         
         if rsp['stat'] != 'ok' :
-            ctx.api_error(1, 'API call failed')
+            self.api_error(1, 'API call failed')
             return
 
-        ctx.api_ok({'photo' : rsp['photo']})
+        self.api_ok({'photo' : rsp['photo']})
         return
 
     
-class PeopleGetInfoHandler (CoreHandler) :
+class PeopleGetInfoHandler (suggestify.API.Request) :
 
-    def run (self, ctx) :
+    def run (self) :
 
         required = ('user_id', )
 
-        if not ctx.ensure_args(required) :
+        if not self.ensure_args(required) :
             return 
 
         args = {
-            'user_id' : ctx.request.get('user_id')
+            'user_id' : self.request.get('user_id')
         }
 
         ttl = 60 * 60 * 7
         
-        rsp = ctx.proxy_api_call('flickr.people.getInfo', args, ttl)
+        rsp = self.proxy_api_call('flickr.people.getInfo', args, ttl)
 
         # wrong and dirty, please to fix
-        ctx.format = 'json'
+        self.format = 'json'
         
         if rsp['stat'] != 'ok' :
-            ctx.api_error(1, 'API call failed')
+            self.api_error(1, 'API call failed')
             return
 
-        ctx.api_ok({'person' : rsp['person']})
+        self.api_ok({'person' : rsp['person']})
         return
 

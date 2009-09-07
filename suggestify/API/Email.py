@@ -1,42 +1,42 @@
-from geosuggestions.API.Core import CoreHandler
-import geosuggestions.Settings as Settings
-import geosuggestions.Email as Email
-            
-class EmailEnableHandler (CoreHandler) :
+import suggestify.API
+import suggestify.Settings as Settings
+import suggestify.Email as Email
 
-    def run (self, ctx) :
+class EmailEnableHandler (suggestify.API.Request) :
+
+    def run (self) :
 
         required = ('crumb', 'email')
 
-        if not ctx.ensure_args(required) :
+        if not self.ensure_args(required) :
             return
 
-        if not ctx.ensure_crumb('method=enable_email') :
+        if not self.ensure_crumb('method=enable_email') :
             return
 
-        email = ctx.request.get('email')
+        email = self.request.get('email')
         
         if not Email.is_valid_address(email) :
-            ctx.api_error(1, 'Invalid email address')
+            self.api_error(1, 'Invalid email address')
             return
 
         #
         
-        settings = Settings.get_settings_for_user(ctx.user.nsid)
+        settings = Settings.get_settings_for_user(self.user.nsid)
 
         if not settings :
-            ctx.api_error(2, 'Unable to load user settings')
+            self.api_error(2, 'Unable to load user settings')
             return
         
         # la la la - I can't hear you.
         
         if email == settings.email_address :
-            ctx.api_ok()
+            self.api_ok()
             return
         
         #
 
-        confirmation_code = ctx.generate_confirmation_code(12)
+        confirmation_code = self.generate_confirmation_code(12)
 
         settings.email_address_pending = email
         settings.email_confirmation_code = confirmation_code
@@ -44,7 +44,7 @@ class EmailEnableHandler (CoreHandler) :
         
         # 
 
-        confirmation_url = "%s/confirm/e/%s" % (ctx.request.host_url, confirmation_code)
+        confirmation_url = "%s/confirm/e/%s" % (self.request.host_url, confirmation_code)
                 
         subject = "The Suggestify project would like you to confirm something"
         body = """Greetings from Suggestify project!
@@ -65,33 +65,33 @@ Cheers,
         """ % confirmation_url
 
         if not Email.send(to=email, subject=subject, body=body) :
-            ctx.api_error(3, 'There was a problem delivering email')
+            self.api_error(3, 'There was a problem delivering email')
             return
         
-        ctx.api_ok()
+        self.api_ok()
         return
     
-class EmailDisableHandler (CoreHandler) :
+class EmailDisableHandler (suggestify.API.Request) :
 
-    def run (self, ctx) :
+    def run (self) :
 
         required = ('crumb',)
 
-        if not ctx.ensure_args(required) :
+        if not self.ensure_args(required) :
             return
 
-        if not ctx.ensure_crumb('method=disable_email') :
+        if not self.ensure_crumb('method=disable_email') :
             return
 
-        settings = Settings.get_settings_for_user(ctx.user.nsid)
+        settings = Settings.get_settings_for_user(self.user.nsid)
 
         if not settings :
-            ctx.api_error(1, 'Unable to load user settings')
+            self.api_error(1, 'Unable to load user settings')
             return
 
         settings.email_address = ''
         settings.email_notifications = False
         settings.put()
 
-        ctx.api_ok()
+        self.api_ok()
         return

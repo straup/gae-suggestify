@@ -1,22 +1,22 @@
-from geosuggestions.API.Core import CoreHandler
-import geosuggestions.Suggestion as Suggestion
+import suggestify.API
+import suggestify.Suggestion as Suggestion
 
-class RejectHandler (CoreHandler) :
+class RejectHandler (suggestify.API.Request) :
 
-    def run (self, ctx) :
+    def run (self) :
         required = ('crumb', 'suggestion_id')
 
-        if not ctx.ensure_args(required) :
+        if not self.ensure_args(required) :
             return 
 
-        if not ctx.ensure_crumb('method=reject') :
+        if not self.ensure_crumb('method=reject') :
             return
 
-        suggestion_id = ctx.request.get('suggestion_id')
-        suggestion = ctx.fetch_pending_suggestion(suggestion_id)
+        suggestion_id = self.request.get('suggestion_id')
+        suggestion = self.fetch_pending_suggestion(suggestion_id)
         
         if not suggestion:
             return 
 
         Suggestion.reject_suggestion(suggestion)
-        return ctx.api_ok()
+        return self.api_ok()

@@ -1,26 +1,22 @@
 import suggestify.API
-import geosuggestions.Suggestion as dbSuggestion
-from geosuggestions.API.Core import CoreHandler
+import suggestify.Suggestion as Suggestion
 
 import FlickrApp.User as User
 
-import logging
-logging.basicConfig(level=logging.INFO)
+class ApproveHandler (suggestify.API.Request) :
 
-class Request (suggestify.API.Request) :
-
-    def run (self, ctx) :
+    def run (self) :
 
         required = ('crumb', 'suggestion_id', 'geo_perms', 'geo_context')
         
-        if not ctx.ensure_args(required) :
+        if not self.ensure_args(required) :
             return 
 
-        if not ctx.ensure_crumb('method=approve') :
+        if not self.ensure_crumb('method=approve') :
             return
 
-        suggestion_id = ctx.request.get('suggestion_id')
-        suggestion = ctx.fetch_pending_suggestion(suggestion_id)
+        suggestion_id = self.request.get('suggestion_id')
+        suggestion = self.fetch_pending_suggestion(suggestion_id)
         
         if not suggestion:
             return 
@@ -43,20 +39,20 @@ class Request (suggestify.API.Request) :
         
         args = {
             'photo_id' : suggestion.photo_id,
-            'auth_token' : ctx.user.token,
+            'auth_token' : self.user.token,
             'check_response' : 1,
             }
 
-        rsp = ctx.api_call('flickr.photos.getInfo', args)
+        rsp = self.api_call('flickr.photos.getInfo', args)
         
         if not rsp :
-            ctx.api_error(8, 'Unable to retrieve photo information from Flickr')
+            self.api_error(8, 'Unable to retrieve photo information from Flickr')
             return
 
         if rsp['photo'].has_key('location') :
-            dbSuggestion.reject_all_pending_suggestions_for_photo(suggestion.photo_id)
+            Suggestion.reject_all_pending_suggestions_for_photo(suggestion.photo_id)
         
-            ctx.api_error(9, 'Photo has already been geotagged')
+            self.api_error(9, 'Photo has already been geotagged')
             return
 
         """
@@ -74,36 +70,37 @@ class Request (suggestify.API.Request) :
                 'lat' : suggestion.latitude,
                 'lon' : suggestion.longitude,
                 'accuracy' : accuracy,
-                'auth_token' : ctx.user.token,
+                'auth_token' : self.user.token,
                 }
 
-        geo_context = ctx.request.get('geo_context')
+        geo_context = self.request.get('geo_context')
         
         if geo_context and int(geo_context) != 0 :
             args['context'] = geo_context
             
-        rsp = ctx.api_call('flickr.photos.geo.setLocation', args)
-    
+        rsp = self.api_call('flickr.photos.geo.setLocation', args)
+
+        if not rsp :
+            self.api_error(10, 'Failed to set location: Flickr API call failed')
+            
         if rsp['stat'] != 'ok' :
-            ctx.api_error(10, 'Failed to set location: %s (%s)' % (rsp['message'], rsp['code']))
+            self.api_error(10, 'Failed to set location: %s (%s)' % (rsp['message'], rsp['code']))
             return
 
         #
         # Geo perms (it would be better if you could assign perms in setLocation...)
         #
 
-        geoperms = int(ctx.request.get('geo_perms'))
-        default = ctx.default_geoperms()
+        geoperms = int(self.request.get('geo_perms'))
+        default = self.default_geoperms()
 
-        logging.debug("perms default:%s assigned:%s" % (default, geoperms))
-        
         if geoperms != default :
 
             method = 'flickr.photos.geo.setPerms'
 
             args = {
                 'photo_id' : suggestion.photo_id,
-                'auth_token' : ctx.user.token,
+                'auth_token' : self.user.token,
                 'is_public' : 0,
                 'is_contact' : 0,
                 'is_family' : 0,
@@ -124,10 +121,11 @@ class Request (suggestify.API.Request) :
             else :
                 pass
 
-            rsp = ctx.api_call('flickr.photos.geo.setPerms', args)
+            rsp = self.api_call('flickr.photos.geo.setPerms', args)
     
             if rsp['stat'] != 'ok' :
-                logging.warning('Failed to set location: %s (%s)' % (rsp['message'], rsp['code']))
+                msg = 'Failed to set location: %s (%s)' % (rsp['message'], rsp['code'])
+                self.log(msg, 'warning')
                 pass
 
         #
@@ -137,9 +135,7 @@ class Request (suggestify.API.Request) :
 	# This is probably a good candidate to do client-side if the approval
         # returns OK
         
-        logging.debug("tags perms:%s by:%s" % (geoperms, suggestion.suggestor_nsid))
-        
-        if geoperms == 1 and suggestion.suggestor_nsid != ctx.user.nsid :
+        if geoperms == 1 and suggestion.suggestor_nsid != self.user.nsid :
 
             # NSID is the default
             
@@ -159,29 +155,28 @@ class Request (suggestify.API.Request) :
             args = {
                 'photo_id' : suggestion.photo_id,
                 'tags' : tags,
-                'auth_token' : ctx.user.token,
+                'auth_token' : self.user.token,
                 'check_response' : 1,
                 }
         
-            rsp = ctx.api_call('flickr.photos.addTags', args)
+            rsp = self.api_call('flickr.photos.addTags', args)
 
         #
         # Update (possibly do this before setting tags?)
         #
         
-        dbSuggestion.approve_suggestion(suggestion)
-            
-        dbSuggestion.reject_all_pending_suggestions_for_photo(suggestion.photo_id)
+        Suggestion.approve_suggestion(suggestion)
+        Suggestion.reject_all_pending_suggestions_for_photo(suggestion.photo_id)
         
         #
         # HAPPY
         #
 
-        photo_owner = ctx.user.nsid
+        photo_owner = self.user.nsid
 
-        if ctx.user.path_alias :
-            photo_owner = ctx.user.path_alias
+        if self.user.path_alias :
+            photo_owner = self.user.path_alias
             
         photo_url = "http://www.flickr.com/photos/%s/%s" % (photo_owner, suggestion.photo_id)
         
-        return ctx.api_ok({'photo_url' : photo_url})
+        return self.api_ok({'photo_url' : photo_url})
