@@ -2,7 +2,7 @@
 
 --
 
-Some things we take for granted:
+SOME THINGS WE TAKE FOR GRANTED:
 
 * The suggestor is not actually notified when a suggestion is approved or
   rejected.
@@ -15,7 +15,7 @@ Some things we take for granted:
 
 --
 
-Things that still need to be done:
+THINGS THAT STILL NEED TO BE DONE:
 
 * Pagination, anywhere and everywhere. This includes the ribbon/carousel which
   isn't smart enough to fetch new photos when it reaches the end of the list.
@@ -31,32 +31,70 @@ Things that still need to be done:
 
 * "Corrections" support for the reverse geocoding.
 
-* The "show me on a map" modal dialog is truly awful. At a minimum the
-  positioning should be made to work.
+* The "show me on a map" modal dialog is truly awful (on the review suggestions
+  page) . At a minimum the positioning should be made to work with page
+  scrolling. 
 
 * The ability to query for anything other than a single user, like tags.
 
 * Likewise, the code should be able to pull in the list of contacts for a user.
 
-* Notifications via XMPP?
-
-* Lots of finnicky positioning/float bugs
+* Lots of finnicky positioning/float bugs, when windows are too narrow and
+  stuff. 
 
 * If a user clicks suggest me while a location is being reverse geocoded (but
   has not returned a WOE ID) should the call to add the suggestion be deferred?
 
+* Recognize machine tags known to infer location (Dopplr Social Atlas,
+  FourSquare etc.) when trying to use tags to determine photo location.
+
 * Any kind of testing in IE
+
+* Notifications via XMPP?
 
 --
 
-If you want to run this locally, you will need to create your own Flickr API key
-(and secret) and plug them in to config.py (start with config.sample.py).
+REQUIREMENTS:
+
+If you want to run a local version of suggestify, you will need:
+
+* A valid Flickr API key, registered as a web application. Both the API key and
+  the application secret will need to be added to the config.py file.
+
+  If you don't have a Flickr API key, you can get one here:
+
+  http://www.flickr.com/services/api/keys/apply/
+
+The API key and secret will need to be added to your own copy of config.py
+(start with config.sample.py). 
 
 Suggestify requires Flickr "web" auth so when you set up your API key be sure to
 configure the callback URL to point to your local instance of AppEngine running
 the code.
 
+* A valid GAE account and a recent version of the GAE SDK for Python (>= 1.2.3)
+  which can be downloaded from:
+
+  http://code.google.com/appengine/downloads.html
+
+There are two other dependencies which are not included as part of the package
+itself. They are: 
+
+* gae-FlickrApp
+
+  http://github.com/straup/gae-flickrapp/tree/master
+
+* gae-APIApp
+
+  http://github.com/straup/gae-APIApp/tree/master
+
+They will need to be installed as follows:
+
+(PLEASE WRITE ME)
+
 --
+
+GENERAL ENGINEERING/DORK NOTES
 
 The library layout is still a bit of a mess.
 
@@ -65,14 +103,3 @@ inability to ever really understand how the hell Python interprets (package)
 names and imports stuff. Mostly it just makes me angry and then I am unable to
 actually imagine a useful solution.
 
---
-
-Third-party libraries this code uses:
-
-* jQuery
-
-* gae-FlickrApp
-
-* gae-APIApp
-
-* js-iamheremap
