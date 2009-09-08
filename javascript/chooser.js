@@ -49,7 +49,17 @@ info.aaronland.suggestify.Chooser.prototype.lookupNSID = function(username){
         _self.photosSearch(search_args);
     };
 
-    var _doThisIfNot = function (rsp) { };
+    var _doThisIfNot = function (rsp) {
+
+        var html = '<p style="color:red;font-weight:700;font-size:14pt;max-width:585px;">';
+        html += 'Hrm. There was a problem fetching photos for <em>' + escape(username) + '</em>. ';
+        html += 'Robot squirrels report "' + rsp['error']['message'] + '".';
+        html += '</p>';
+        html += '<p>Would you like to <a href="/chooser">try again</a>?</p>';
+
+        $("#photos").html(html);
+        return;
+    };
 
     var method = 'flickr.people.findByUsername';
 

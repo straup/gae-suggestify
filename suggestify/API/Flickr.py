@@ -20,9 +20,13 @@ class PlacesGetInfoHandler (suggestify.API.Request) :
 
         # wrong and dirty, please to fix
         self.format = 'json'
+
+        if not rsp :
+            self.api_error(1, 'API call failed to anything')
+            return
         
         if rsp['stat'] != 'ok' :
-            self.api_error(1, 'API call failed')
+            self.api_error(2, 'API call failed: %s' % rsp['message'])
             return
 
         self.api_ok({'place' : rsp['place']})
@@ -48,9 +52,13 @@ class FindByUsernameHandler (suggestify.API.Request) :
 
         # wrong and dirty, please to fix
         self.format = 'json'
+
+        if not rsp :
+            self.api_error(1, 'API call failed to anything')
+            return
         
         if rsp['stat'] != 'ok' :
-            self.api_error(1, 'API call failed')
+            self.api_error(2, 'API call failed: %s' % rsp['message'])
             return
 
         self.api_ok({'user' : rsp['user']})
@@ -75,9 +83,13 @@ class PhotoGetInfoHandler (suggestify.API.Request) :
 
         # wrong and dirty, please to fix
         self.format = 'json'
+
+        if not rsp :
+            self.api_error(1, 'API call failed to anything')
+            return
         
         if rsp['stat'] != 'ok' :
-            self.api_error(1, 'API call failed')
+            self.api_error(2, 'API call failed: %s' % rsp['message'])
             return
 
         self.api_ok({'photo' : rsp['photo']})
@@ -105,7 +117,11 @@ class PeopleGetInfoHandler (suggestify.API.Request) :
         self.format = 'json'
         
         if rsp['stat'] != 'ok' :
-            self.api_error(1, 'API call failed')
+            self.api_error(1, 'API call failed to return anything')
+            return
+
+        if not rsp :
+            self.api_error(2, 'API call failed: %s' % rsp['message'])
             return
 
         self.api_ok({'person' : rsp['person']})
