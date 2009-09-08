@@ -121,7 +121,7 @@ class SuggestHandler (suggestify.API.Request) :
             subject = 'You have a new suggestion for one of your photos!'
             body = """Greetings from the Suggestify project!
 
-Flickr user %s has suggested a location for your photo %s!
+Flickr user %s has suggested a location for your photo "%s".
 
 To approve or reject this suggestion, follow the link below:
 
