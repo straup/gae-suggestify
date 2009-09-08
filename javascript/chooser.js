@@ -172,7 +172,15 @@ info.aaronland.suggestify.Chooser.prototype.photosSearch = function(args){
     };
 
     var _doThisIfNot = function (rsp){
-        _self.log(rsp);
+
+        var html = '<p style="color:red;font-weight:700;font-size:14pt;max-width:585px;">';
+        html += 'Hrm. There was a problem fetching photos for <em>' + escape(args['username']) + '</em>. ';
+        html += 'Robot squirrels report "' + rsp['error']['message'] + '".';
+        html += '</p>';
+        html += '<p>Would you like to <a href="/chooser">try again</a>?</p>';
+
+        $("#photos").html(html);
+        return;
     };
 
     var method = 'search';

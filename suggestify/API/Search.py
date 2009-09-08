@@ -171,12 +171,16 @@ class SearchForUserHandler (suggestify.API.Request) :
         # wrong and dirty, please to fix
         self.format = 'json'
 
-        if not rsp or rsp['stat'] != 'ok' :
-            self.api_error(1, 'API call failed')
+        if not rsp :
+            self.api_error(1, 'API call failed to return anything')
             return
 
+        if rsp['stat'] != 'ok' :
+            self.api_error(1, 'API call failed: %s' % rsp['message'])
+            return
+            
         if rsp['photos']['total'] == 0 :
-            self.api_ok()
+            self.api_error(3, 'There are no photos!')
             return
 
         # it's assumed you've checked that the logged in
