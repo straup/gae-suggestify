@@ -8,6 +8,7 @@ from google.appengine.ext import webapp
 # from ifuckinghateyoupython import *
 
 from suggestify.Main import MainHandler
+from suggestify.Example import ExampleHandler
 from suggestify.Frob import FrobHandler
 from suggestify.Chooser import ChooserHandler
 from suggestify.Blocked import BlockedHandler
@@ -38,6 +39,7 @@ if __name__ == '__main__':
     ('/', MainHandler),
     ('/faq', AboutHandler),
     ('/about', AboutHandler),
+    ('/example', ExampleHandler),    
     
     ('/signout', LogoutHandler),
     ('/signin', LoginHandler),    
