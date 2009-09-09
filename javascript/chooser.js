@@ -33,7 +33,7 @@ info.aaronland.suggestify.Chooser.prototype.lookupNSID = function(username){
         if (rsp['stat'] != 'ok'){
 
             var html = '<p style="color:red;font-weight:700;font-size:14pt;max-width:585px;">';
-            html += 'Hrm. Flickr failed to find "' + escape(username) + '" and says: ' + rsp['message'] + '.';
+            html += 'Hrm. Flickr failed to find "' + _self.scrub(username, 1) + '" and says: ' + rsp['message'] + '.';
             html += '</p>';
             html += '<p>Would you like to <a href="/chooser">try to find another user</a>?</p>';
 
@@ -52,7 +52,7 @@ info.aaronland.suggestify.Chooser.prototype.lookupNSID = function(username){
     var _doThisIfNot = function (rsp) {
 
         var html = '<p style="color:red;font-weight:700;font-size:14pt;max-width:585px;">';
-        html += 'Hrm. There was a problem fetching photos for <em>' + escape(username) + '</em>. ';
+        html += 'Hrm. There was a problem fetching photos for <em>' + _self.scrub(username, 1) + '</em>. ';
         html += 'Robot squirrels report "' + rsp['error']['message'] + '".';
         html += '</p>';
         html += '<p>Would you like to <a href="/chooser">try again</a>?</p>';
@@ -131,7 +131,10 @@ info.aaronland.suggestify.Chooser.prototype.photosSearch = function(args){
             return;
         }
 
-        var link = '<a href="http://www.flickr.com/photos/' + escape(args['nsid']) + '" style="text-decoration:none;">' + escape(args['username']) + '\'s</a>';
+        var link = '<a href="http://www.flickr.com/photos/';
+        link += _self.scrub(args['nsid']);
+        link += '" style="text-decoration:none;">' + _self.scrub(args['username'], 1) + '\'s</a>';
+
         var what = 'these are ' + link + ' (not geotagged) photos';
         $("#whatisthis_text").html(what);
 
@@ -174,7 +177,7 @@ info.aaronland.suggestify.Chooser.prototype.photosSearch = function(args){
     var _doThisIfNot = function (rsp){
 
         var html = '<p style="color:red;font-weight:700;font-size:14pt;max-width:585px;">';
-        html += 'Hrm. There was a problem fetching photos for <em>' + escape(args['username']) + '</em>. ';
+        html += 'Hrm. There was a problem fetching photos for <em>' + _self.scrub(args['username'], 1) + '</em>. ';
         html += 'Robot squirrels report "' + rsp['error']['message'] + '".';
         html += '</p>';
         html += '<p>Would you like to <a href="/chooser">try again</a>?</p>';
@@ -597,6 +600,16 @@ info.aaronland.suggestify.Chooser.prototype.log = function(msg){
     }
 
     console.log('[chooser] ' + msg);
+};
+
+info.aaronland.suggestify.Chooser.prototype.scrub = function(str, allow_whitespace){
+    str = encodeURIComponent(str);
+
+    if (allow_whitespace){
+        str = str.replace(/%20/g, " ");
+    }
+
+    return str;
 };
 
 // -*-java-*-
