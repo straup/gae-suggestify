@@ -111,8 +111,6 @@ info.aaronland.suggestify.Chooser.prototype.photosSearch = function(args){
 
     var _doThisOnSuccess = function(rsp){
 
-        console.log(rsp);
-
         // we really do reference this elsewhere
         _self.rsp = rsp;
 
