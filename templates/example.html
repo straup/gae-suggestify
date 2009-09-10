@@ -1,24 +1,55 @@
 {% include "inc_head.html" %}
 
+<h2 class="example_header">How does Suggestify Work?</h2>
+
+<p>This is a short walk-through of how Suggestify works. It will show you how one user suggests a location for another user's photo and how that photo owner approves (or rejects) the suggestion.</p>
+
+<p><em>(Also, please remember that Suggestify is still in early days and there is still <a href="http://localhost:8080/about#known">a list of known-knowns</a>.)</em></p>
+
 <h2 class="example_header">Step 1</h2>
 
-<img src="/images/example-user.jpg" height="291" width="760" alt="choose user screenshot" />
+<p>Choose a Flickr user whose photos you want to suggestion a location for. For example:</p>
+
+<img src="/images/example-user.jpg" height="291" width="760" alt="choose user screenshot" class="example_image" />
 
 <h2 class="example_header">Step 2</h2>
 
 <p>Once you've selected a user their not-geotagged photos will be loaded in a
   carousel-style selector beneath a map.</p>
 
-<img src="/images/example-choose.jpg" height="562" width="627" alt="choose photos screenshot" />
+<p>Select the photo you want to suggest a location for by clicking on the thumbnail. A larger verion of the photo, including its title and tags, will load in a sidebar to the right of the map.</p>
+
+<p>Position the marker at the center of the map over the location where you
+  think that photo was taken. You can do this using the panning and zoom
+  controls on the map itself, by entering an address you'd like to have geocoded
+  or by geolocating your current location and using that as a starting
+  point.</p>
+
+<img src="/images/example-choose.jpg" height="562" width="627" alt="choose photos screenshot" class="example_image" />
 
 <h2 class="example_header">Step 3</h2>
 
-<img src="/images/example-photo.jpg" height="569" width="700" alt="geotag photo screenshot" />
+<p>Well, that's it really.</p>
+
+<p>As you drag the map, Suggestify will try to reverse geocode the marker's current position. (It is not yet possible to correct the reverse geocoding but that will be enabled in future versions.)</p>
+
+<p>You can also suggest whether the photo was taken indoors or outdoors. This data is not exposed anywhere on the Flickr website yet but can be <a href="http://tech.groups.yahoo.com/group/yws-flickr/message/4573">queried using the Flickr API</a>.</p>
+
+<p>Once you're happy with the suggestion, click the <q>OK</q> button and your suggestion will be filed away for the photo owner to review.</p>
+
+<img src="/images/example-photo.jpg" height="569" width="700" alt="geotag photo screenshot" class="example_image" />
 
 <h2 class="example_header">Step 4 (maybe)</h2>
 
-<p>If you've enabled email notifications for new suggestions then you'll receive
-  a message from the Suggestify robot, like this one:</p>
+<p>How does the photo owner find out about your suggestion? At the moment there are three ways:</p>
+
+<ol class="example_notifications">
+  <li>You tell them yourselves.</li>
+  <li>The photo owner is an active Suggestify user and will see your suggestion the next time they log in to the site.</li>
+  <li>The photo owner has configured their Suggestify account to be sent email notifications when new suggestions are added.</li>
+</ol>
+
+<p>If a user has enabled email notifications they'll receive a message from the Suggestify robot, like this one:</p>
 
 <pre class="example_email">
 Date: Tue, 08 Sep 2009 15:20:43 +0000
@@ -43,13 +74,21 @@ http://suggestify.appspot.com/settings/notifications
 Cheers,
 </pre>
 
-<p style="font-style:italic;">Email notifications can be enabled, or disabled, at any time
+<p>Email notifications can be enabled, or disabled, at any time
   from <a href="http://localhost:8080/settings/notifications">the settings tab</a>.</p>
 
 <h2 class="example_header">Step 5</h2>
 
-<img src="/images/example-review.jpg" width="770" height="397" alt="approve suggestion screenshot" />
+<P>Finally, this is what a photo owner will see when they review your suggestion.</p>
 
-<p>That's it!</p>
+<p>The details of a suggestion are left to the discretion of the photo owner and may be changed. The hope is that people will share their geotagged photos publicly but there are lots of good reasons why a person may choose to keep that information private.</p>
 
-{% include "inc_four.html" %}
+<img src="/images/example-review.jpg" width="770" height="397" alt="approve suggestion screenshot" class="example_image" />
+
+<div style="font-style:italic;">
+<p>If a suggestion is approved and the geo information made public then an additional <q>geo:suggestedby=[SUGGESTOR USERNAME]</q> machine tag will be added to the photo.</p>
+
+<p>Machine tags are outside the scope of this example but here's a link to all the public photos that have been <a href="http://www.flickr.com/photos/tags/geo:suggestedby=">geotagged, and machine tagged, using Suggestify</a>.</p>
+</div>
+
+{% include "inc_foot.html" %}

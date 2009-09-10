@@ -3,7 +3,8 @@
 body { 
        font-family:sans-serif;
        font-size:11pt;
-       color:darkslategrey;
+       // color:darkslategrey;
+       color:#0A1B2A;
        margin-top:25px;
        margin-left:0;
        margin-right:0;
@@ -14,6 +15,14 @@ body {
 h2 { 
      color:#cc0099;
 
+}
+
+h3 { 
+     color:darkslategrey;
+}
+
+p { 
+    line-height:20px;
 }
 
 /* ids */
@@ -319,6 +328,31 @@ h2 {
                   margin-top:20px;
                   padding:10px;
                   text-decoration:none;
+}
+
+.example_image { 
+                 border:1px dotted #ccc;
+                 padding:10px;
+                 margin-top:25px;
+                 margin-bottom:25px;
+}
+
+.example_notifications li { 
+                            line-height:25px;
+}
+
+.example_email { 
+                 margin:40px;
+                 font-family:serif;
+                 color:#333;
+}
+
+.example_header { 
+                  border-bottom:2px solid #ccc;
+                  padding-top:20px;
+                  margin-top:15px;
+                  padding-bottom:20px;
+                  margin-bottom:30px;
 }
 
 .fl_username { 
