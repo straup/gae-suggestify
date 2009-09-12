@@ -19,6 +19,7 @@ info.aaronland.suggestify.Blocked = function(args){
     };
 
     this.api = new info.aaronland.suggestify.API(api_args);
+    this.utils = new info.aaronland.suggestify.Utils();
 };
 
 info.aaronland.suggestify.Blocked.prototype.unblock = function(user_id, username){
@@ -26,10 +27,12 @@ info.aaronland.suggestify.Blocked.prototype.unblock = function(user_id, username
     // @ symbols make jquery sad...
     var jquery_id = user_id.replace("@", "");
 
+    var _self = this;
+
     var _doThisOnSuccess = function(rsp){
 
         var html = '<span class="unblock_user_ok">';
-        html += escape(username) + ' has been unblocked!';
+        html += _self.utils.scrub(username, 1) + ' has been unblocked!';
         html += '</span>';
 
         $("#blocked_" + jquery_id).html(html);
@@ -50,7 +53,7 @@ info.aaronland.suggestify.Blocked.prototype.unblock = function(user_id, username
         var msg = err.getAttribute("message");
 
         var html = '<span class="unblock_user_fail">';
-        html += 'Hrm. Unblocking failed with the following error: "' + escape(msg) + '"';
+        html += 'Hrm. Unblocking failed with the following error: "' + _self.utils.scrub(msg, 1) + '"';
         html += '</span>';
 
         $("#blocked_" + jquery_id).html(html);

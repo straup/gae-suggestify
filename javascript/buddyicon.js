@@ -25,9 +25,8 @@ info.aaronland.suggestify.Buddyicon = function(args){
         'enable_logging' : this.args['enable_logging']
     };
 
-    // hey look, we're using the local flickr proxy cache api
-
     this.api = new info.aaronland.suggestify.API(api_args);
+    this.utils = new info.aaronland.suggestify.Utils();
 };
 
 info.aaronland.suggestify.Buddyicon.prototype.fetch = function(nsid, id){
@@ -73,7 +72,7 @@ info.aaronland.suggestify.Buddyicon.prototype.fetch = function(nsid, id){
 
 info.aaronland.suggestify.Buddyicon.prototype.draw = function(nsid, id, buddyicon_url){
 
-        var html = '<a href="http://www.flickr.com/photos/' + escape(nsid) + '">';
+        var html = '<a href="http://www.flickr.com/photos/' + this.utils.scrub(nsid) + '">';
         html += '<img src="' + buddyicon_url + '" height="32" width="32" alt="buddyicon" />';
         html += '</a>';
 
