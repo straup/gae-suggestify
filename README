@@ -7,7 +7,7 @@ SOME THINGS WE TAKE FOR GRANTED:
 * The suggestor is not actually notified when a suggestion is approved or
   rejected.
 
-* So far, the site relies on both the suggestor and the photographer knowing
+  So far, the site relies on both the suggestor and the photographer knowing
   about a suggestion. I've given some thought to allowing the site to post
   comments (on a photographer's page) on behalf of a suggestor saying that
   there's a pending suggestion. This has the potential to be spamtastic so I
@@ -47,6 +47,8 @@ THINGS THAT STILL NEED TO BE DONE:
 
 * Recognize machine tags known to infer location (Dopplr Social Atlas,
   FourSquare etc.) when trying to use tags to determine photo location.
+
+* Lots of CSS is still inlined and needs to be tidied up and rationalized.
 
 * Any kind of testing in IE
 
@@ -90,7 +92,16 @@ itself. They are:
 
 They will need to be installed as follows:
 
-(PLEASE WRITE ME)
+ me @ localhost in /home/me/www/gae-suggestify  
+ 101 ->ls -al 
+ total 104
+ drwxr-xr-x  21 asc   staff   714 Sep  7 18:20 .
+ drwxr-xr-x  14 asc   staff   476 Aug 20 07:54 ..
+ drwxr-xr-x  12 asc   staff   408 Sep  7 18:21 .git
+ -rw-r--r--   1 asc   staff    15 May 20 09:06 .gitignore
+ lrwxr-xr-x   1 root  staff    39 Jul  2 23:48 APIApp -> /home/me/python/gae-APIApp/APIApp
+ lrwxr-xr-x   1 root  staff    45 Jul  2 23:48 FlickrApp -> /home/me/python/gae-FlickrApp/FlickrApp
+ ...
 
 --
 
@@ -102,4 +113,3 @@ This is equal parts a function of the app (still) growing organically and my
 inability to ever really understand how the hell Python interprets (package)
 names and imports stuff. Mostly it just makes me angry and then I am unable to
 actually imagine a useful solution.
-
