@@ -21,7 +21,7 @@ def create_settings_for_user (nsid) :
     settings.nsid = nsid
     settings.email_notifications = False
     settings.email_confirmed = False            
-    settings.comment_notifications = False            
+    settings.comment_notifications = True  
     settings.put()
     
     return settings
