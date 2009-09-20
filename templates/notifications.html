@@ -13,7 +13,13 @@ $(document).ready(function(){
 		'email_enable_crumb' : '{{ email_enable_crumb|escape }}',
 		'email_change_crumb' : '{{ email_enable_crumb|escape }}',
 		'email_disable_crumb' : '{{ email_disable_crumb|escape }}',
+		'comments_enable_crumb' : '{{ comments_enable_crumb|escape }}',
+		'comments_disable_crumb' : '{{ comments_disable_crumb|escape }}',
    };
+
+   // note: there is a very bad separation of form and content with the 
+   // notifications JS - the library is assuming all kinds of callbacks
+   // and class names that are happening at the template layer...
 
    window.notify = new info.aaronland.suggestify.Notifications(notify_args);
 
@@ -96,9 +102,9 @@ $(document).ready(function(){
 {% else %}
 	<li>
           <a href="#" onclick="javascript:display_email_setup(); return false;">Enable email notifications</a>
-          <span style="font-size:12pt;">for new suggestions</span>
+          <br /><span style="font-size:10pt;">when someone suggests a location for my photos</span>
 
-          <div id="new_email" style="font-size:12pt;display:none;margin-top:25px;margin-bottom:20px;">
+          <div id="new_email" style="font-size:12pt;display:none;margin-top:25px;margin-bottom:20px;;">
 
             Okay, the first thing you'll need to do is enter an email address
             below.<br /><br /> Once you do and submit the request we'll generate a
@@ -122,12 +128,21 @@ $(document).ready(function(){
         </li>
 {% endif %}
 
-        <!--
-	<li>
-          <a href="">Enable comments</a>
-          <div style="font-size:12pt;">for new suggestions</div>
-        </li>
-        -->
+{% if config.notifications_flickr_comments %}
+
+<li id="change_comments">
+{% if comments_disable_crumb %}
+  <a href="#" onclick="javascript:window.notify.disable_comments(); return false;">Don't allow comments</a>
+{% else %}
+  <a href="#" onclick="javascript:window.notify.enable_comments(); return false;">Allow comments</a>
+{% endif %}
+<br /><span style="font-size:10pt;">to be added to my photos when someone suggests a location</span>
+
+<div id="change_comments_status" style="font-size:12pt;display:none;margin-top:25px;margin-bottom:20px;;"></div>
+
+</li>
+
+{% endif %}
 
 </ul>
 
