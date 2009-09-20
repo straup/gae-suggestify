@@ -6,6 +6,8 @@ import suggestify.Email as Email
 import FlickrApp.User.Blocked as Blocked
 import FlickrApp.User.Membership as Membership
 
+import config
+
 class SuggestHandler (suggestify.API.Request) :
 
     def run (self) :
@@ -67,6 +69,14 @@ class SuggestHandler (suggestify.API.Request) :
             self.api_error(999, 'Already suggested')
             return
 
+        lat = float(self.request.get('latitude'))
+        lon = float(self.request.get('longitude'))
+        acc = int(self.request.get('accuracy'))
+        woeid = self.request.get('woeid')
+
+        if woeid != '' :
+            woeid = int(woeid)
+            
         #
         # grab the photo
         #
@@ -88,10 +98,10 @@ class SuggestHandler (suggestify.API.Request) :
         args = {
             'photo_id' : photo_id,
             'owner_id' : owner_nsid,
-            'latitude' : self.request.get('latitude'),
-            'longitude' : self.request.get('longitude'),
-            'accuracy' : self.request.get('accuracy'),
-            'woeid' : self.request.get('woeid'),
+            'latitude' : lat,
+            'longitude' : lon,
+            'accuracy' : acc,
+            'woeid' : woeid,
             'suggestor_id' : self.user.nsid,
             'suggestor_name' : self.user.username,
             'context' : geo_context,
@@ -111,11 +121,11 @@ class SuggestHandler (suggestify.API.Request) :
         # Notifications?
         #
 
+        review_link = "%s/review/%s" % (self.request.host_url, photo_id)
+            
         settings = Settings.get_settings_for_user(owner_nsid)
 
         if settings and settings.email_notifications :
-
-            review_link = "%s/review/%s" % (self.request.host_url, photo_id)
             
             to_addr = settings.email_address
             subject = 'You have a new suggestion for one of your photos!'
@@ -134,6 +144,61 @@ Cheers,
             """ % (self.user.username, rsp['photo']['title']['_content'], review_link, self.request.host_url)
 
             Email.send(to=to_addr, subject=subject, body=body)
+
+        #
+        # Post comment to the photo on Flickr?
+        #
+
+        if config.config['notifications_flickr_comments'] and self.request.get('add_flickr_comment') :
+
+            is_at = "%s, %s" % (lat, lon)
+            
+            if woeid :
+
+                method = 'flickr.places.getInfo'
+                args = {'woe_id' : woeid}
+
+                rsp = self.proxy_api_call(method, args)
+
+                if rsp and rsp['stat'] == 'ok' and rsp.has_key('place') :
+                    is_at = rsp['place']['name']
+
+            # build the comment
+            
+            comment = """I've suggested a location for this photo over at the <a href="http://suggestify.appspot.com">Suggestify</a> project.
+
+I think it was taken here: <a href="http://www.flickr.com/nearby/%s,%s">%s</a>. You can approve or reject this suggestion by following this link:
+
+<a href="%s">%s</a>
+
+If you do approve the suggestion then your photo will be automagically geotagged!
+
+(You can also configure Suggestify to prevent any of your photos from being "suggestified" in the future.)
+""" % (lat, lon, is_at, review_link, review_link)
+
+            # post the comment
+            
+            method = 'flickr.photos.comments.addComment'
+            
+            args = {
+                'photo_id' : photo_id,
+                'comment_text' : comment,
+                'auth_token' : self.user.token,
+                }
+
+            rsp = self.api_call(method, args)
+
+            # what is the right way to notify the user that
+            # suggestion was recorded by the comment was not?
+            
+            if not rsp or rsp['stat'] != 'ok' :
+
+                msg = 'Failed to post review comment: '
+
+                if rsp :
+                    msg += rsp['message']
+                    
+                self.log(msg, 'warning')
                 
         #
         # OKAY!
