@@ -29,6 +29,7 @@ import suggestify.API.PeopleInfo
 import suggestify.API.Email
 import suggestify.API.Flickr
 import suggestify.API.Search
+import suggestify.API.Comments
 
 if __name__ == '__main__':
 
@@ -65,7 +66,9 @@ if __name__ == '__main__':
     ('/api/buddyicon', suggestify.API.PeopleInfo.BuddyiconHandler),
     ('/api/pathalias', suggestify.API.PeopleInfo.PathAliasHandler),
     ('/api/enable_email', suggestify.API.Email.EmailEnableHandler),
-    ('/api/disable_email', suggestify.API.Email.EmailDisableHandler),    
+    ('/api/disable_email', suggestify.API.Email.EmailDisableHandler),
+    ('/api/enable_comments', suggestify.API.Comments.CommentsEnableHandler),
+    ('/api/disable_comments', suggestify.API.Comments.CommentsDisableHandler),        
     ('/api/flickr.photos.getInfo', suggestify.API.Flickr.PhotoGetInfoHandler),
     ('/api/flickr.people.getInfo', suggestify.API.Flickr.PeopleGetInfoHandler),
     ('/api/flickr.places.getInfo', suggestify.API.Flickr.PlacesGetInfoHandler),        
