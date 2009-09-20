@@ -28,3 +28,4 @@ class dbSuggestion (db.Model) :
   created = db.DateTimeProperty(auto_now_add=True)  
   updated = db.DateTimeProperty(auto_now=True)
   status = db.IntegerProperty()
+  comment_id = db.StringProperty()
