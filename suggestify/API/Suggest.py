@@ -149,9 +149,13 @@ Cheers,
         # Post comment to the photo on Flickr?
         #
 
-        if config.config['notifications_flickr_comments'] and self.request.get('add_flickr_comment') :
+        if config.config['notifications_flickr_comments'] and settings.comment_notifications  :
 
-            is_at = "%s, %s" % (lat, lon)
+            # Do not display the lat,lon in the commment since they
+            # are public for anyone to see. Only display WOE ID and name,
+            # if we can find them. 
+
+            is_at = ""
             
             if woeid :
 
@@ -161,20 +165,22 @@ Cheers,
                 rsp = self.proxy_api_call(method, args)
 
                 if rsp and rsp['stat'] == 'ok' and rsp.has_key('place') :
-                    is_at = rsp['place']['name']
-
+                    # note the trailing space at the end
+                    
+                    is_at = """I think it was taken somewhere around: <a href="http://www.flickr.com/places/%s">%s</a>. """ % (woeid, rsp['place']['name'])
+                    
             # build the comment
             
             comment = """I've suggested a location for this photo over at the <a href="http://suggestify.appspot.com">Suggestify</a> project.
 
-I think it was taken here: <a href="http://www.flickr.com/nearby/%s,%s">%s</a>. You can approve or reject this suggestion by following this link:
+%sYou can see the exact location and approve or reject this suggestion by following this link:
 
 <a href="%s">%s</a>
 
 If you do approve the suggestion then your photo will be automagically geotagged!
 
 (You can also configure Suggestify to prevent any of your photos from being "suggestified" in the future.)
-""" % (lat, lon, is_at, review_link, review_link)
+""" % (is_at, review_link, review_link)
 
             # post the comment
             
@@ -191,8 +197,12 @@ If you do approve the suggestion then your photo will be automagically geotagged
             # what is the right way to notify the user that
             # suggestion was recorded by the comment was not?
             
-            if not rsp or rsp['stat'] != 'ok' :
-
+            if rsp and rsp['stat'] :
+                comment_id = rsp['comment']['id']
+                s.comment_id = comment_id
+                s.put()
+                
+            else :
                 msg = 'Failed to post review comment: '
 
                 if rsp :
