@@ -10,4 +10,5 @@ config = {
     'javascript_logging' : 1,
 
     'notifications_sender' : 'foo@example.com',
+    'notifications_flickr_comments' : False,
     };
