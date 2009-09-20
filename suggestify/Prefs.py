@@ -21,13 +21,30 @@ class NotificationsHandler (suggestify.Request) :
 
         self.assign("settings", self.settings)
 
-        email_enable_crumb = self.generate_crumb(self.user, "method=enable_email")
-        self.assign("email_enable_crumb", email_enable_crumb)
+        #
+        # Email notifications
+        #
         
         if self.settings.email_notifications :
             email_disable_crumb = self.generate_crumb(self.user, "method=disable_email")
             self.assign("email_disable_crumb", email_disable_crumb)
+        else :
+            email_enable_crumb = self.generate_crumb(self.user, "method=enable_email")
+            self.assign("email_enable_crumb", email_enable_crumb)
 
+        #
+        # Comments (on Flickr photos)
+        #
+        
+        if self.config['notifications_flickr_comments'] :
+
+            if not self.settings.comment_notifications :
+                comments_enable_crumb = self.generate_crumb(self.user, "method=enable_comments")
+                self.assign("comments_enable_crumb", comments_enable_crumb)
+            else :
+                comments_disable_crumb = self.generate_crumb(self.user, "method=disable_comments")
+                self.assign("comments_disable_crumb", comments_disable_crumb)                
+        
         self.display("notifications.html")
         return
 
