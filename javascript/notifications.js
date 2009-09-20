@@ -137,8 +137,8 @@ info.aaronland.suggestify.Notifications.prototype.enable_comments = function(){
 
     var _doThisOnSuccess = function(rsp){
 
-        var html = '<span class="enable_comments_ok">';
-        html += 'Okay! You will no longer receive email notifications for new suggestions.';
+        var html = '<span class="toggle_comments_ok">';
+        html += 'Okay! When someone suggests a location for one of your photos we\'ll post a notification comment on their behalf.';
         html += '</span>';
 
         $("#change_comments_status").html(html);
@@ -150,7 +150,7 @@ info.aaronland.suggestify.Notifications.prototype.enable_comments = function(){
         var err = rsp.getElementsByTagName("error")[0];
         var msg = err.getAttribute("message");
 
-        var html = '<span class="enable_comments_fail">';
+        var html = '<span class="toggle_comments_fail">';
         html += 'Hrm. Robot central reported the following error: ' + msg;
         html += '</span>';
 
@@ -164,6 +164,7 @@ info.aaronland.suggestify.Notifications.prototype.enable_comments = function(){
     this.api.api_call('enable_comments', meth_args, _doThisOnSuccess, _doThisIfNot);
 
     $("#change_comments_status").html('<span class="whirclick">robot squirrels are processing your request...</span>');
+    $("#change_comments_status").show();
 };
 
 info.aaronland.suggestify.Notifications.prototype.disable_comments = function(){
@@ -172,7 +173,7 @@ info.aaronland.suggestify.Notifications.prototype.disable_comments = function(){
 
     var _doThisOnSuccess = function(rsp){
 
-        var html = '<span class="diable_comments_ok">';
+        var html = '<span class="toggle_comments_ok">';
         html += 'Okay! You will no longer receive email notifications for new suggestions.';
         html += '</span>';
 
@@ -185,7 +186,7 @@ info.aaronland.suggestify.Notifications.prototype.disable_comments = function(){
         var err = rsp.getElementsByTagName("error")[0];
         var msg = err.getAttribute("message");
 
-        var html = '<span class="disable_comments_fail">';
+        var html = '<span class="toggle_comments_fail">';
         html += 'Hrm. Robot central reported the following error: ' + msg;
         html += '</span>';
 
@@ -199,6 +200,7 @@ info.aaronland.suggestify.Notifications.prototype.disable_comments = function(){
     this.api.api_call('disable_comments', meth_args, _doThisOnSuccess, _doThisIfNot);
 
     $("#change_comments_status").html('<span class="whirclick">robot squirrels are processing your request...</span>');
+    $("#change_comments_status").show();
 };
 
 // -*-java-*-
