@@ -10,6 +10,10 @@ if (! info.aaronland.suggestify){
     info.aaronland.suggestify = {};
 }
 
+// note: there is a very bad separation of form and content with the 
+// notifications JS - the library is assuming all kinds of callbacks
+// and class names that are happening at the template layer...
+
 info.aaronland.suggestify.Notifications = function(args){
     this.args = args;
 
@@ -125,6 +129,76 @@ info.aaronland.suggestify.Notifications.prototype.change_email = function(email_
     this.api.api_call('enable_email', meth_args, _doThisOnSuccess, _doThisIfNot);
 
     $("#change_email_form").html('<span class="whirclick">robot squirrels are processing email address...</span>');
+};
+
+info.aaronland.suggestify.Notifications.prototype.enable_comments = function(){
+
+    var _self = this;
+
+    var _doThisOnSuccess = function(rsp){
+
+        var html = '<span class="enable_comments_ok">';
+        html += 'Okay! You will no longer receive email notifications for new suggestions.';
+        html += '</span>';
+
+        $("#change_comments_status").html(html);
+        $("#change_comments").hide();
+    };
+
+    var _doThisIfNot = function(rsp){
+
+        var err = rsp.getElementsByTagName("error")[0];
+        var msg = err.getAttribute("message");
+
+        var html = '<span class="enable_comments_fail">';
+        html += 'Hrm. Robot central reported the following error: ' + msg;
+        html += '</span>';
+
+        $("#change_comments_status").html(html);
+    };
+
+    var meth_args = {
+        'crumb' : this.args['comments_enable_crumb'],
+    };
+    
+    this.api.api_call('enable_comments', meth_args, _doThisOnSuccess, _doThisIfNot);
+
+    $("#change_comments_status").html('<span class="whirclick">robot squirrels are processing your request...</span>');
+};
+
+info.aaronland.suggestify.Notifications.prototype.disable_comments = function(){
+
+    var _self = this;
+
+    var _doThisOnSuccess = function(rsp){
+
+        var html = '<span class="diable_comments_ok">';
+        html += 'Okay! You will no longer receive email notifications for new suggestions.';
+        html += '</span>';
+
+        $("#change_comments_status").html(html);
+        $("#change_comments").hide();
+    };
+
+    var _doThisIfNot = function(rsp){
+
+        var err = rsp.getElementsByTagName("error")[0];
+        var msg = err.getAttribute("message");
+
+        var html = '<span class="disable_comments_fail">';
+        html += 'Hrm. Robot central reported the following error: ' + msg;
+        html += '</span>';
+
+        $("#change_comments_status").html(html);
+    };
+
+    var meth_args = {
+        'crumb' : this.args['comments_disable_crumb'],
+    };
+    
+    this.api.api_call('disable_comments', meth_args, _doThisOnSuccess, _doThisIfNot);
+
+    $("#change_comments_status").html('<span class="whirclick">robot squirrels are processing your request...</span>');
 };
 
 // -*-java-*-
