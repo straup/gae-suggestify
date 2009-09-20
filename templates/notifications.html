@@ -130,15 +130,17 @@ $(document).ready(function(){
 
 {% if config.notifications_flickr_comments %}
 
-<li id="change_comments">
+<li>
+<span id="change_comments">
 {% if comments_disable_crumb %}
   <a href="#" onclick="javascript:window.notify.disable_comments(); return false;">Don't allow comments</a>
 {% else %}
   <a href="#" onclick="javascript:window.notify.enable_comments(); return false;">Allow comments</a>
 {% endif %}
 <br /><span style="font-size:10pt;">to be added to my photos when someone suggests a location</span>
+</span>
 
-<div id="change_comments_status" style="font-size:12pt;display:none;margin-top:25px;margin-bottom:20px;;"></div>
+<div id="change_comments_status" style="font-size:12pt;margin-top:25px;margin-bottom:20px;"></div>
 
 </li>
 
