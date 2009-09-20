@@ -532,6 +532,18 @@ p {
                        font-weight:700;
 }
 
+.toggle_comments_ok { 
+                font-size:18pt;
+                font-weight:700;
+                color:green;
+}
+
+.toggle_comments_fail { 
+                font-size:18pt;
+                font-weight:700;
+                color:#cc0066;
+}
+
 .unblock_user { 
                 margin-left:20px;
                 padding:10px;
