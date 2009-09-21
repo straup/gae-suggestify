@@ -22,13 +22,25 @@
           </div>
 
           <ul class="options">
-            <li><a href="/chooser">Suggest a location</a></li>
+
+            <li id="chooser_link">
+            {% if config.notifications_flickr_comments %}
+              {% ifequal user.perms 1 %}
+              <a href="#" onclick="javascript:confirm_token_change_review('chooser');return false;">Suggest a location</a>
+              {% else %}
+            <a href="/chooser">Suggest a location</a>
+              {% endifequal %}
+            {% else %}
+
+            <a href="/chooser">Suggest a location</a>
+            {% endif %}
+            </li>
 
             {% if pending_suggestions %}
             <li id="review_link">
 
               {% ifequal user.perms 1 %}
-              <a href="#" onclick="javascript:confirm_token_change_review();return false;">Review suggested locations</a>
+              <a href="#" onclick="javascript:confirm_token_change_review('review');return false;">Review suggested locations</a>
               {% else %}
               <a href="/review">Review suggested locations</a>
               {% endifequal %}
