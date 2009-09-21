@@ -2,10 +2,18 @@
 
 {% if user %}
 
+	{% if config.notifications_flickr_comments %}
+        {% ifequal user.perms 1 %}
+        <li><a href="#" onclick="javascript:confirm_token_change_navi('chooser');return false;">make a suggestion</a></li>
+        {% else %}
 	<li><a href="/chooser">make a suggestion</a></li>
+        {% endifequal %}
+        {% else %}
+	<li><a href="/chooser">make a suggestion</a></li>
+        {% endif %}
 
         {% ifequal user.perms 1 %}
-        <li><a href="#" onclick="javascript:confirm_token_change_navi();return false;">review suggestions</a></li>
+        <li><a href="#" onclick="javascript:confirm_token_change_navi('review');return false;">review suggestions</a></li>
         {% else %}
         <li><a href="/review">review suggestions</a></li>
         {% endifequal %}
