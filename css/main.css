@@ -183,6 +183,12 @@ p {
                      margin-bottom:20px;
 }
 
+#token_change_chooser_link { 
+                     font-size:12pt;
+                     margin-top:15px;
+                     margin-bottom:20px;
+}
+
 #token_skip { 
                   font-size:14pt;
               font-weight:700;
