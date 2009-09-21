@@ -9,9 +9,14 @@ from django.utils import simplejson
 class ChooserHandler (suggestify.Request) :
 
   def get (self, context, filter) :
-    
-    if not self.check_logged_in(self.min_perms) :
-      self.do_flickr_auth(self.min_perms)
+
+    min_perms = self.min_perms
+
+    if self.request.get('perms') == 'write' :
+      min_perms = 'write'
+      
+    if not self.check_logged_in(min_perms) :
+      self.do_flickr_auth(min_perms)
       return
 
     # this is who I am ...
@@ -95,8 +100,6 @@ class ChooserHandler (suggestify.Request) :
       other_user = User.get_user_by_username(other_username)
       
       if other_user :
-
-        self.assign("other_user", other_user)
       
         if Blocked.is_user_blocked(self.user.nsid, other_user.nsid) :
           self.assign('blocked', 1)
@@ -104,6 +107,14 @@ class ChooserHandler (suggestify.Request) :
         elif Membership.has_user_opted_out(other_user.nsid) :
           self.assign('optedout', 1)
 
+        else :
+
+          pass
+        
+        self.assign("other_user", other_user)
+        
+        #
+        
     # crumbs
       
     crumb = self.generate_crumb(self.user, 'method=suggest')
