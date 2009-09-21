@@ -9,30 +9,67 @@
 
             <script type="text/javascript">
 
-                function confirm_token_change(id){
+                function confirm_token_change(id, ctx){
 
-                	var html = '<div id="token_change_' + id + '">';
-                	html += '<span style="font-size:1.5em;">There\'s just one thing:</span><br /><br />';
-                  	html += 'In order to review suggestions, the authentication token ';
-                  	html += 'that connects your Flickr account with "suggestify" will need to be upgraded ';
-                  	html += 'to have "write" permissions.<br /><br />';
-                  	html += 'This is so that we can geotag a photo on your behalf ';
-                  	html += 'when you approve a suggestion.<br /><br />';
-                  	html += 'All that means is that when you click <q style="color:green;">OK</q> you\'ll be sent to Flickr and asked ';
-                  	html += 'again to allow "suggestify" access to your account, only this time with ';
-                  	html += '"write" permissions.<br /><br />';
-                  	html += 'Once you do, you\'ll be sent back here to the list of suggestion awaiting your review.';
-                  	html += '</div>';
-                	html += '<form method="GET" action="/review">';
-                  	html += '<input type="submit" value="NEVERMIND. That\'s not what I want to do" onclick="skip_token_change(\'';
-			html += id;
-                        html += '\');return false" class="reject_token_change"/>';
-                  	html += '<input type="submit" value="OK" class="confirm_token_change" />';
-                  	html += '<br clear="all" />';
-                  	html += '</form>';
+                	if (ctx == 'review'){
+
+               			var html = '<div id="token_change_' + id + '">';
+               			html += '<span style="font-size:1.5em;">There\'s just one thing:</span><br /><br />';
+               			html += 'In order to review suggestions, the authentication token ';
+              			html += 'that connects your Flickr account with "suggestify" will need to be upgraded ';
+               			html += 'to have "write" permissions.<br /><br />';
+                  		html += 'This is so that we can geotag a photo on your behalf ';
+                  		html += 'when you approve a suggestion.<br /><br />';
+                  		html += 'All that means is that when you click <q style="color:green;">OK</q> you\'ll be sent to Flickr and asked ';
+                  		html += 'again to allow "suggestify" access to your account, only this time with ';
+                  		html += '"write" permissions.<br /><br />';
+                  		html += 'Once you do, you\'ll be sent back here to the list of suggestion awaiting your review.';
+               			html += '</div>';
+               			html += '<form method="GET" action="/review">';
+               			html += '<input type="submit" value="NEVERMIND. That\'s not what I want to do" onclick="skip_token_change(\'' + id + '\');return false" class="reject_token_change"/>';
+               			html += '<input type="submit" value="OK" class="confirm_token_change" />';
+               			html += '<br clear="all" />';
+               			html += '</form>';
+			}
+
+{% if config.notifications_flickr_comments %}
+
+			if (ctx == 'chooser'){
+
+               			var html = '<div id="token_change_' + id + '">';
+               			html += '<span style="font-size:1.5em;">There\'s just one thing:</span><br /><br />';
+               			html += 'If you\'d like to notify a person of a suggestion you\'ve made by leaving a comment ';
+                		html += 'on their photo, the authentication token ';
+              			html += 'that connects your Flickr account with "suggestify" will need to be upgraded ';
+               			html += 'to have "write" permissions.<br /><br />';
+                  		html += 'All that means is that when you click <q style="color:green;">OK</q> you\'ll be sent to Flickr and asked ';
+                  		html += 'again to allow "suggestify" access to your account, only this time with ';
+                  		html += '"write" permissions.<br /><br />';
+                  		html += 'Once you do, you\'ll be sent back here and you can suggestify like crazy.<br /><br />';
+                		html += '<em>Just remember that even if you have a token with "write" permissions the user whose photos your are ';
+                  		html += 'suggesting locations for may have chosen to disallow comments from being added to their photos.</em>';
+               			html += '</div>';
+               			html += '<form method="GET" action="/chooser">';
+                		html += '<input type="hidden" name="perms" value="write">';
+               			html += '<input type="submit" value="I just want to suggest locations (never mind the comments)" onclick="skip_token_change_comments();return false;"';
+                       		html += ' class="reject_token_change"/>';
+               			html += '<input type="submit" value="OK" class="confirm_token_change" />';
+               			html += '<br clear="all" />';
+               			html += '</form>';
+			}
+{% endif %}
 
                 	$("#" + id).html(html);
                 }
+
+{% if config.notifications_flickr_comments %}
+
+                function skip_token_change_comments(){
+                	location.href='/chooser';
+                	return false;
+                }
+
+{% endif %}
 
                 function skip_token_change(id){
 
@@ -50,12 +87,12 @@
                 	$("#" + id).html(html);
                 }
 
-                function confirm_token_change_navi(){
-                	confirm_token_change('main');
+                function confirm_token_change_navi(ctx){
+                	confirm_token_change('main', ctx);
                 }
 
-                function confirm_token_change_review(){
-                	confirm_token_change('review_link');
+                function confirm_token_change_review(ctx){
+                	confirm_token_change('review_link', ctx);
                 }
 
             </script>
