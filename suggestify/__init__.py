@@ -42,7 +42,11 @@ class Request (FlickrAppRequest) :
         ttl = (60 * 60 * 24) * 1
         
         rsp = self.proxy_api_call(method, args, ttl)
-        return rsp['person']['geoperms']
+
+        if rsp and rsp['stat'] == 'ok' :
+            return rsp['person']['geoperms']
+
+        return None
     
     def log (self, msg, level='info') :
 
