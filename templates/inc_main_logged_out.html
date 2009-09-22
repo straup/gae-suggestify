@@ -1,7 +1,7 @@
 
 	<h2>Hi there!</h2>
 
-	<p style="font-size:1.3em;line-height:23px;">This is a site to <a href="/example">allow you to geotag other people's photos</a> on <a href="http://www.flickr.com/">Flickr</a> by suggesting a location to the photo's owner. Likewise, someone else can offer you suggestions of where <em>your</em> un-geotagged photos were taken.</p>
+	<p class="intro_shortversion">This is a site to <a href="/example">allow you to geotag other people's photos</a> on <a href="http://www.flickr.com/">Flickr</a> by suggesting a location to the photo's owner. Likewise, someone else can offer you suggestions of where <em>your</em> un-geotagged photos were taken.</p>
 
 	<p>That location information is stored here until the photo's owner approves (or rejects) the suggestion. If approved, the photo is geotagged on Flickr (using the Flickr API) and the suggestor is credited by adding a special tag to the photo.</p>
 
@@ -11,7 +11,7 @@
 
             <li id="chooser_loggedout_link">
             {% if config.notifications_flickr_comments %}
-              <a href="#" onclick="javascript:confirm_token_change_review('chooser_loggedout');return false;">Suggest a location</a>
+              <a href="#" onclick="javascript:confirm_token_change_list('chooser_loggedout');return false;">Suggest a location</a>
             {% else %}
               <a href="/chooser">Suggest a location</a>
             {% endif %}
@@ -19,8 +19,7 @@
             <span style="font-size:12pt;color:#ff6699;">for someone else's photos</span>
             </li>
 
-            <li><a href="/review">Review suggestions</a> <span style="font-size:12pt;color:#ff6699;">for
-            your photos</span></li>
+            <li><a href="/review">Review suggestions</a> <span style="font-size:12pt;color:#ff6699;">for your photos</span></li>
 
             <li><a href="/deny">Opt-out entirely</a></li>
 
@@ -29,7 +28,7 @@
           <p>Opting-out means that you'd rather not participate at all and other
           Flickr users will be prevented from suggesting locations for your photos.</p>
 
-          <p style="font-size:small;font-style:italic;">Either way, you will be redirected to <a href="http://www.flickr.com/">Flickr.com</a> first to confirm that you want to allow this website to suggest locations on your behalf (or to prevent other people from suggesting locations for your photos). You should only need to do this once.</p>
+          <p class="aside">Either way, you will be redirected to <a href="http://www.flickr.com/">Flickr.com</a> first to confirm that you want to allow this website to suggest locations on your behalf (or to prevent other people from suggesting locations for your photos). You should only need to do this once.</p>
 
           <p>Or, you can also:</p>
 
