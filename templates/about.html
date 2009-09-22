@@ -26,6 +26,40 @@
 
 <h2>How does a person find out about my suggestion?</h2>
 
+{% if config.notifications_flickr_comments %}
+
+<p>When someone suggests a location for another person's photo Suggestify tries
+  to post a (Flickr) comment with a handy link back to the suggestion on the
+  suggestor's behalf. Like this:</p>
+
+<img src="/images/example-comment.jpg" height="300" width="300" alt="comment notification screenshot" class="example_image" />
+
+<p>Photo owners may choose to <a href="/settings/notifications">opt-out of comment notifications entirely</a> 
+  even if they continue to allow people to suggest locations for their
+  photos. They may do this because they've enabled another notification
+  mechanism and/or because they'd rather not have <q>broadcast</q> style
+  comments added to their photos. It may make it more difficult for a photo
+  owner to find out about a suggestion but that is a photographer's
+  prerogative.</p>
+
+<p>(It's also possible that the suggestor doesn't have permissions,
+  on the Flickr site itself, to add comments.)</p>
+
+<p class="aside">The ability to leave a comment requires that the suggestor grant
+  Suggestify <q>write</q> access to their Flickr account. That's because, in Flickr API
+  terms, <q>write</q> means the ability to <em>modify</em> a photo &#8212; adding a
+  comment for example &#8212; as that user. If a user (making suggestions) prefers that Suggestify
+  only have a <q>read</q> token for their account then they can still suggest
+  locations comments won't be added and the recipient will need to be notified
+  by other means.</p>
+
+<p>Users may also configure Suggestify to send email notifications when new
+  locations are suggested for their photos.  </p>
+
+<p>Both comment and notifications may be configured
+  the <a href="/settings">settings</a> tab on the site.</p>
+
+{% else %}
 <p>Suggestify's Achilles' heel is that it's still very difficult for people to
   find out that someone has suggested a location for their photos. Basically
   the suggestor needs to tell the photo owner and/or the photo owner needs to
@@ -45,6 +79,7 @@
   necessarily be required for someone who just wants to make a suggestion (and
   only needs a "read" token to prove who they say they are on Flickr) and
   doesn't care about adding comments.</p>
+{% endif %}
 
 <a name="known"></a>
 
@@ -70,9 +105,12 @@
 
 <li>Lots of other similar interactions and details are missing</li>
 
+{% if config.notifications_flickr_comments %}
+{% else %}
 <li>There are no notifications (yet) which means both parties need to know about
 the side, though you can <a href="/settings/notifications">configure the app to
     send you email</a> when someone else suggests a location for one of your photos</li>
+{% endif %}
 
 <li>There are no hooks for "corrections" (this was deliberately punted on for now)</li>
 
