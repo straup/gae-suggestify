@@ -14,7 +14,7 @@ class ChooserHandler (suggestify.Request) :
 
     if self.request.get('perms') == 'write' :
       min_perms = 'write'
-      
+  
     if not self.check_logged_in(min_perms) :
       self.do_flickr_auth(min_perms)
       return
