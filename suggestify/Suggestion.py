@@ -84,7 +84,7 @@ def reject_suggestion (suggestion) :
 def approve_suggestion (suggestion) :
     suggestion.status = 2
     suggestion.put()
-    
+
 def fetch_pending_suggestion (suggestion_id) :
 
     gql = "SELECT * FROM dbSuggestion WHERE __key__ = :1"
