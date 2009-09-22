@@ -9,8 +9,15 @@
 
           <ul class="options">
 
-            <li><a href="/chooser">Suggest a location</a> <span style="font-size:12pt;color:#ff6699;">for
-            someone else's photos</span></li>
+            <li id="chooser_loggedout_link">
+            {% if config.notifications_flickr_comments %}
+              <a href="#" onclick="javascript:confirm_token_change_review('chooser_loggedout');return false;">Suggest a location</a>
+            {% else %}
+              <a href="/chooser">Suggest a location</a>
+            {% endif %}
+
+            <span style="font-size:12pt;color:#ff6699;">for someone else's photos</span>
+            </li>
 
             <li><a href="/review">Review suggestions</a> <span style="font-size:12pt;color:#ff6699;">for
             your photos</span></li>
