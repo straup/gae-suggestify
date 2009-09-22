@@ -12,15 +12,15 @@
                 You are logged in with
                 your <a href="http://www.flickr.com/photos/{% ifequal user.path_alias "" %}{{ user.nsid|escape }}{% else %}{{ user.path_alias|escape }}{% endifequal %}/" class="fl_username">{{ user.username|escape }}</a> Flickr account
 
-                <form method="POST" action="/signout" style="display:inline;margin-left:15px;">
+                <form method="POST" action="/signout" id="signout">
                   <input type="hidden" name="crumb" value="{{ logout_crumb|escape }}" />
-                  <input type="submit" value="sign out" style="border:1px dotted white;background-color:#ff0066;color:white;font-size:14px;padding:5px;" />
+                  <input type="submit" value="sign out" />
                 </form>
 
             {% else %}
-                <form method="GET" action="/signin" style="display:inline;">
+                <form method="GET" action="/signin" id="signin">
                   <input type="hidden" name="crumb" value="{{ login_crumb|escape }}" />
-                  <input type="submit" value="sign in" style="border:1px dotted yellow;background-color:#ff0066;color:white;font-size:14px;padding:5px;" />
+                  <input type="submit" value="sign in" />
                 </form>
             {% endif %}
             </div>
