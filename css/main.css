@@ -262,6 +262,11 @@ p {
                 color:#cc0066;
 }
 
+.aside { 
+         font-size:small;
+         font-style:italic;
+}
+
 .block_ok { 
                 font-size:18pt;
                 font-weight:700;
@@ -372,6 +377,11 @@ p {
                color:#cc0066;
 }
 
+.intro_shortversion { 
+                      font-size:1.3em;
+                      line-height:23px;
+}
+
 .new_email_ok { 
                 font-size:18pt;
                 font-weight:700;
@@ -443,6 +453,27 @@ p {
                    border:2px solid #ccc;
                    text-decoration:none;
                    color:white;
+}
+
+#signin input[type='submit'] { 
+          border:1px dotted yellow;
+          background-color:#ff0066;
+          color:white;
+          font-size:14px;
+          padding:5px;
+}
+
+#signout { 
+           display:inline;
+           margin-left:15px;
+}
+
+#signout input[type='submit'] { 
+                 border:1px dotted white;
+                 background-color:#ff0066;
+                 color:white;
+                 font-size:14px;
+                 padding:5px;
 }
 
 .submit { 
