@@ -7,7 +7,14 @@ import logging
 
 class Request (FlickrAppRequest) :
 
-    def __init__ (self, min_perms=None) :
+    def __init__ (self, min_perms='read') :
+
+        # This is really dumb since config gets stored
+        # globally and is instantly reset everytime
+        # someone calls any of the 'write' handlers which
+        # is why the define 'read' above even though it's
+        # in the bloody config (until it's not). This
+        # needs to be cleaned up and fixed...
         
         if min_perms :
             config['flickr_minperms'] = min_perms
