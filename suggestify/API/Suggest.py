@@ -179,7 +179,7 @@ Cheers,
 
 If you do approve the suggestion then your photo will be automagically geotagged!
 
-(You can also <a href="http://suggestify.appspot.com/settings">configure Suggestify</a> to prevent any of your photos from being "suggestified" in the future.)
+(You can also <a href="http://suggestify.appspot.com/settings">configure Suggestify</a> to stop these notifications from being added to your photos or to prevent any of your photos from being "suggestified" at all in the future.)
 """ % (is_at, review_link, review_link)
 
             # post the comment
