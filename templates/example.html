@@ -41,7 +41,65 @@
 
 <h2 class="example_header">Step 4 (maybe)</h2>
 
-<p>How does the photo owner find out about your suggestion? At the moment there are three ways:</p>
+{% if config.notifications_flickr_comments %}
+
+<p>When someone suggests a location for another person's photo Suggestify tries
+  to post a (Flickr) comment with a handy link back to the suggestion on the
+  suggestor's behalf. <!--Like this:--></p>
+
+<!--<img src="/images/example-comment.jpg" height="300" width="300" alt="comment notification screenshot" class="example_image" />-->
+
+<p>Photo owners may choose to <a href="/settings/notifications">opt-out of comment notifications entirely</a> 
+  even if they continue to allow people to suggest locations for their
+  photos. They may do this because they've enabled another notification
+  mechanism and/or because they'd rather not have <q>broadcast</q> style
+  comments added to their photos. It may make it more difficult for a photo
+  owner to find out about a suggestion but that is a photographer's
+  prerogative.</p>
+
+<p>(It's also possible that the suggestor doesn't have permissions,
+  on the Flickr site itself, to add comments.)</p>
+
+<p class="aside">The ability to leave a comment requires that the suggestor grant
+  Suggestify <q>write</q> access to their Flickr account. That's because, in Flickr API
+  terms, <q>write</q> means the ability to <em>modify</em> a photo &#8212; adding a
+  comment for example &#8212; as that user. If a user (making suggestions) prefers that Suggestify
+  only have a <q>read</q> token for their account then they can still suggest
+  locations comments won't be added and the recipient will need to be notified
+  by other means.</p>
+
+<p>If a user has enabled email notifications they'll receive a message from the Suggestify robot, like this one:</p>
+
+<pre class="example_email">
+Date: Tue, 08 Sep 2009 15:20:43 +0000
+Subject: You have a new suggestion for one of your photos!
+From: roboto.suggestificato@gmail.com
+To: you@example.com
+
+Greetings from the Suggestify project!
+
+Flickr user slash_kittens has suggested a location for your photo "Untitled  
+Focus #200907152106"!
+
+To approve or reject this suggestion, follow the link below:
+
+http://suggestify.appspot.com/review/VERY_LONG_NUMBER
+
+If you're tired of getting these email messages you can always disable  
+email notifications by going to:
+
+http://suggestify.appspot.com/settings/notifications
+
+Cheers,
+</pre>
+
+<p>Both email and comment notifications can be enabled, or disabled, at any time
+  from <a href="http://localhost:8080/settings/notifications">the settings tab</a>.</p>
+
+{% else %}
+
+<p>How does the photo owner find out about your suggestion? At the moment there
+  are three ways:</p>
 
 <ol class="example_notifications">
   <li>You tell them yourselves.</li>
@@ -76,6 +134,8 @@ Cheers,
 
 <p>Email notifications can be enabled, or disabled, at any time
   from <a href="http://localhost:8080/settings/notifications">the settings tab</a>.</p>
+
+{% endif %}
 
 <h2 class="example_header">Step 5</h2>
 
