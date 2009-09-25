@@ -27,6 +27,10 @@ handlers:
 - url: /images
   static_dir: images
 
+- url: /admin/.*
+  script: admin.py
+  login: admin
+
 - url: .*
   script: main.py
   # login: admin
