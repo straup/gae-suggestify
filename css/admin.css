@@ -1,0 +1,34 @@
+#admin { 
+        margin-top:0;
+        background-color:white;
+        border:1px dotted #ccc;
+        padding:30px;
+        padding-bottom:60px;
+        padding-left:20%;
+        padding-right:10%;
+}
+
+#admin table th { 
+                  text-align:left;
+                  font-size:small;
+                  padding-bottom:5px;
+                  padding-right:10px;
+}
+
+#admin table tr { 
+                  
+}
+#admin table td { 
+                  font-size:small;
+                  padding-right:10px;
+                  padding-top:5px;
+                  padding-bottom:5px;
+                  }
+
+.bool { 
+        text-align:center;
+ }
+
+.num { 
+       text-align:right;
+ }
