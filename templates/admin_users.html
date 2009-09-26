@@ -1,0 +1,58 @@
+{% include "inc_admin_head.html" %}
+
+<h2>Users</h2>
+
+<table>
+	<tr>
+		<th>Username</th>
+		<th>NSID</th>
+                <th>Perms</th>
+		<th>Created</th>
+		<th>Opted Out</th>
+                <th>Email Notif.</th>
+                <th>Comment Notif.</th>
+                <th>Suggestions</th>
+                <th>Approved</th>
+                <th>Rejected</th>
+                <th>For</th>
+	</tr>
+
+{% for u in users %}
+	<tr>
+		<td><a href="/admin/user/{{ u.nsid|escape }}">{{ u.username|escape }}</a></td>
+		<td><a href="http://www.flickr.com/photos/{{ u.nsid|escape }}" target="_flickr">{{ u.nsid|escape }}</a></td>
+		<td>{{ u.perms_str|escape }}</td>
+		<td>{{ u.created_ymd|escape }}</td>
+		<td class="bool">{% if u.opted_out %}Y{% else %}N{% endif %}</td>
+		<td class="bool">{% if u.settings.email_notifications %}Y{% else %}N{% endif %}</td>
+		<td class="bool">{% if u.settings.comment_notifications %}Y{% else %}N{% endif %}</td>
+                <td class="num">{{ u.count_suggested_by|escape }}</td>
+                <td class="num">{{ u.count_suggested_by_approved|escape }}</td>
+                <td class="num">{{ u.count_suggested_by_rejected|escape }}</td>
+                <td class="num">{{ u.count_suggested_for|escape }}</td>
+	</tr>
+{% endfor %}
+
+</table>
+
+
+<div style="margin-top:30px;text-align:center;">
+{% if prev %}
+        <a href="/admin/users/page{{ prev|escape }}">prev</a>
+{% else %}
+        first
+{% endif %}
+
+... 
+
+{% if next %}
+        <a href="/admin/users/page{{ next|escape }}">next</a>
+{% else %}
+        last
+{% endif %}
+
+<br />
+<span style="font-size:small;">({{ count }} users)</span>
+</div>
+
+{% include "inc_admin_foot.html" %}
