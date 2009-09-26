@@ -104,3 +104,23 @@ def pending_suggestions_for_user (nsid, photo_id=None) :
     
     pending = db.GqlQuery(gql, *query_args)
     return pending
+
+def count_suggestions_by_user (nsid, status=None) :
+
+    params = [nsid]
+    
+    gql = "SELECT * FROM dbSuggestion WHERE suggestor_nsid = :1"
+
+    if status :
+        gql += " AND status = :2"
+        params.append(status)
+        
+    res = db.GqlQuery(gql, *params)
+    return res.count()
+
+def count_suggestions_for_user (nsid) :
+
+    gql = "SELECT * FROM dbSuggestion WHERE owner_nsid = :1"
+    res = db.GqlQuery(gql, nsid)
+
+    return res.count()
