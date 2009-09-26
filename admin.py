@@ -12,6 +12,7 @@ if __name__ == '__main__':
   handlers = [
 
     ('/admin/', suggestify.Admin.IndexHandler),
+    (r'/admin/users(?:/page(\d+))?', suggestify.Admin.UsersHandler),    
   ]
   
   application = webapp.WSGIApplication(handlers, debug=True)
