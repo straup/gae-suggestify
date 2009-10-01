@@ -1,9 +1,43 @@
 import suggestify.Robots
+import FlickrApp.User as User
+
+import re
 
 class Request (suggestify.Robots.Request) :
 
     def __init__ (self) :
         suggestify.Robots.Request.__init__(self, 'write')
+
+    def ensure_valid_args (self, args) :
+
+        coord = re.compile(r"^-?\d+(?:\.\d+)?$")
+        photo = re.compile(r"^\d+$")
+        
+        for k in args :
+
+            v = self.request.get(k)
+      
+            if k == 'photo_id' :
+
+                if not photo.match(v) :
+                    return False
+
+            if k == 'lat' or k == 'lon' :
+
+                if not coord.match(v) :
+                    return False
+
+            if k == 'acc' :
+
+                if not int(v) in range(1, 17) :
+                    return False
+        
+            if k == 'context' :
+
+                if not int(v) in (0, 1, 2) :
+                    return False
+
+        return True
         
     def get (self, uuid) :
 
@@ -23,19 +57,23 @@ class Request (suggestify.Robots.Request) :
         # args/sig validation
         #
         
-        req_args = ('photo_id', 'lat', 'lon', '_s')
-        sig_args = ['photo_id', 'lat', 'lon']
+        req_args = ('photo_id', 'lat', 'lon', 'acc', 'context', '_s')
+        sig_args = ['photo_id', 'lat', 'lon', 'acc', 'context']
 
         if not self.ensure_required_args(req_args) :
             self.error('missing_args')
             return
 
+        if not self.ensure_valid_args(req_args) :
+            self.error('invalid_args')
+            return
+        
         if not self.ensure_robot_sig(sig_args, self.request.get('_s')) :
             self.error('invalid_sig')
             return    
-
+        
         #
-        # get the photo
+        # Get the photo
         #
 
         method = 'flickr.photos.getInfo'
@@ -53,18 +91,42 @@ class Request (suggestify.Robots.Request) :
             return
 
         #
-        # ensure the photo is owned by the logged in user
+        # Ensure the photo is owned by the logged in user
         #
         
-        if rsp['photo']['owner'] != self.user.nsid :
+        if rsp['photo']['owner']['nsid'] != self.user.nsid :
             self.error('invalid_owner')
             return
 
         #
-        # build a mock suggestion here
+        # Ensure the photo isn't already geotagged
         #
+
+        if rsp['photo'].has_key('location') :
+            self.error('already_geotagged')
+            return
         
-        suggestion = {}
+        #
+        # Build a mock suggestion here
+        #
+
+        suggestor = User.get_user_by_nsid(self.config['flickr_nsid'])
+        
+        suggestion = {
+            'photo_id' : int(photo_id),
+            'owner_nsid' : self.user.nsid,
+            'suggestor_nsid' : suggestor.nsid,
+            'suggestor_username' : suggestor.username,
+            'latitude' : float(self.request.get('lat')),
+            'longitude' : float(self.request.get('lon')),
+            'accuracy' : int(self.request.get('acc')),  
+            'woeid' : 'fix me ?',
+            'context' : int(self.request.get('context')),
+            # 'created' : 'datetime'
+            # 'updated' : 'datetime'
+            'status' : 1,
+            'comment_id' : '',
+            }
         
         self.assign('count_pending', 1)
         self.assign('pending', (suggestion,))
