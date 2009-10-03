@@ -71,7 +71,8 @@ if __name__ == '__main__':
     ('/api/disable_comments', suggestify.API.Comments.CommentsDisableHandler),        
     ('/api/flickr.photos.getInfo', suggestify.API.Flickr.PhotoGetInfoHandler),
     ('/api/flickr.people.getInfo', suggestify.API.Flickr.PeopleGetInfoHandler),
-    ('/api/flickr.places.getInfo', suggestify.API.Flickr.PlacesGetInfoHandler),        
+    ('/api/flickr.places.getInfo', suggestify.API.Flickr.PlacesGetInfoHandler),
+    ('/api/flickr.places.findByLatLon', suggestify.API.Flickr.PlacesReverseGeoHandler),            
     ('/api/flickr.people.findByUsername', suggestify.API.Flickr.FindByUsernameHandler),        
     ('/api/search', suggestify.API.Search.SearchForUserHandler),
   ]
