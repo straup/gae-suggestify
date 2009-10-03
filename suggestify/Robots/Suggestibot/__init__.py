@@ -56,9 +56,9 @@ class Request (suggestify.Robots.Request) :
         #
         # args/sig validation
         #
-        
+
         req_args = ('photo_id', 'lat', 'lon', 'acc', 'context', '_s')
-        sig_args = ['photo_id', 'lat', 'lon', 'acc', 'context']
+        sig_args = ['photo_id', 'lat', 'lon', 'acc', 'context', 'woeid']
 
         if not self.ensure_required_args(req_args) :
             self.error('missing_args')
@@ -67,7 +67,7 @@ class Request (suggestify.Robots.Request) :
         if not self.ensure_valid_args(req_args) :
             self.error('invalid_args')
             return
-        
+
         if not self.ensure_robot_sig(sig_args, self.request.get('_s')) :
             self.error('invalid_sig')
             return    
@@ -107,11 +107,16 @@ class Request (suggestify.Robots.Request) :
             return
         
         #
-        # Build a mock suggestion here
+	# Create a mock suggestion
         #
-
-        suggestor = User.get_user_by_nsid(self.config['flickr_nsid'])
         
+        suggestor = User.get_user_by_nsid(self.config['flickr_nsid'])
+
+        woeid = 0
+
+        if self.request.get('woeid') != '' :
+            woeid = self.request.get('woeid')
+            
         suggestion = {
             'photo_id' : int(photo_id),
             'owner_nsid' : self.user.nsid,
@@ -120,7 +125,7 @@ class Request (suggestify.Robots.Request) :
             'latitude' : float(self.request.get('lat')),
             'longitude' : float(self.request.get('lon')),
             'accuracy' : int(self.request.get('acc')),  
-            'woeid' : 'fix me ?',
+            'woeid' : woeid,
             'context' : int(self.request.get('context')),
             # 'created' : 'datetime'
             # 'updated' : 'datetime'
@@ -139,9 +144,11 @@ class Request (suggestify.Robots.Request) :
         self.assign('reject_crumb', reject_crumb)
         self.assign('block_crumb', block_crumb)
 
+	# assign suggested location params and sig here...
+        
         #
         # Uh...what actually gets called when the user clicks ok?
         #
         
-        self.display('review.html')
+        self.display('suggestibot.html')
         return
