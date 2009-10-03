@@ -63,7 +63,7 @@ class Request (suggestify.Request) :
       
     raw.append("_secret=%s" % self.config['signing_secret'])
     return md5.new("&".join(raw)).hexdigest()
-
+        
   def error (self, reason='') :
     self.assign("error", reason)
     self.display("robots_error.html")
