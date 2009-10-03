@@ -31,6 +31,10 @@ handlers:
   script: admin.py
   login: admin
 
+- url: /robots/.*
+  script: robots.py
+  login: admin
+
 - url: .*
   script: main.py
   # login: admin
