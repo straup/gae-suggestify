@@ -38,6 +38,51 @@ class Request (suggestify.Robots.Request) :
                     return False
 
         return True
+
+    def post (self, uuid) :
+
+        is_api = True
+
+        if not self.ensure_config(uuid) :
+            self.error('invalid_config', is_api)
+            return
+        
+        if not self.check_logged_in(self.min_perms) :
+            self.do_flickr_auth(self.min_perms)
+            return
+
+        if not self.validate_crumb(self.user, path, self.request.get('crumb')) :
+            self.error('invalid_perms', is_api)
+            return False
+
+        #
+        # args/sig validation
+        #
+
+        req_args = ('photo_id', 'lat', 'lon', 'acc', 'context', '_s')
+        sig_args = ['photo_id', 'lat', 'lon', 'acc', 'context', 'woeid', 'crumb']
+
+        if not self.ensure_required_args(req_args) :
+            self.error('missing_args', is_api)
+            return
+
+        if not self.ensure_valid_args(req_args) :
+            self.error('invalid_args', is_api)
+            return
+
+        if not self.ensure_robot_sig(sig_args, self.request.get('_s')) :
+            self.error('invalid_sig')
+            return    
+
+        mock = self.generate_mock_suggestion()
+
+        if not mock :
+            return
+        
+        mock.status = 2
+        suggestion = Suggestion.create(mock)
+
+        # TODO: return ok!
         
     def get (self, uuid) :
 
@@ -72,6 +117,31 @@ class Request (suggestify.Robots.Request) :
             self.error('invalid_sig')
             return    
         
+        suggestion = self.generate_mock_suggestion()
+
+        if not suggestion :
+            return
+        
+        self.assign('count_pending', 1)
+        self.assign('pending', (suggestion,))
+
+        approve_crumb = self.generate_crumb(self.user, 'method=approve')
+        reject_crumb = self.generate_crumb(self.user, 'method=reject')
+        block_crumb = self.generate_crumb(self.user, 'method=block')
+        
+        self.assign('approve_crumb', approve_crumb)
+        self.assign('reject_crumb', reject_crumb)
+        self.assign('block_crumb', block_crumb)
+
+        # TODO: generate a new sig with the crumb
+        
+	# TODO: assign suggested location params and sig here...
+        
+        self.display('suggestibot.html')
+        return
+
+    def generate_mock_suggestion (self) :
+
         #
         # Get the photo
         #
@@ -132,23 +202,5 @@ class Request (suggestify.Robots.Request) :
             'status' : 1,
             'comment_id' : '',
             }
-        
-        self.assign('count_pending', 1)
-        self.assign('pending', (suggestion,))
 
-        approve_crumb = self.generate_crumb(self.user, 'method=approve')
-        reject_crumb = self.generate_crumb(self.user, 'method=reject')
-        block_crumb = self.generate_crumb(self.user, 'method=block')
-        
-        self.assign('approve_crumb', approve_crumb)
-        self.assign('reject_crumb', reject_crumb)
-        self.assign('block_crumb', block_crumb)
-
-	# assign suggested location params and sig here...
-        
-        #
-        # Uh...what actually gets called when the user clicks ok?
-        #
-        
-        self.display('suggestibot.html')
-        return
+        return suggestion
