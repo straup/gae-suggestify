@@ -35,7 +35,7 @@ class Request (suggestify.Request) :
       return False
 
     robot_args = self.collect_robot_args(sig_args)
-    test_sig = self.generate_robot_sig(robot_args)
+    test_sig = self.generate_robot_sig(self.config['signing_secret'], robot_args)
 
     if robot_sig != test_sig :
       return False
@@ -50,8 +50,8 @@ class Request (suggestify.Request) :
       args[ nm ] = self.request.get(nm)
 
     return args
-  
-  def generate_robot_sig (self, args) :
+   
+  def generate_robot_sig (self, secret, args) :
 
     raw = []
     
@@ -61,9 +61,13 @@ class Request (suggestify.Request) :
     for nm in keys :
       raw.append("%s=%s" % (nm, args[nm]))
       
-    raw.append("_secret=%s" % self.config['signing_secret'])
+    raw.append("_secret=%s" % secret)
     return md5.new("&".join(raw)).hexdigest()
-        
-  def error (self, reason='') :
+       
+  def error (self, reason='', is_api=False) :
+
+    if is_api :
+      return
+    
     self.assign("error", reason)
     self.display("robots_error.html")
