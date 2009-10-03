@@ -31,6 +31,39 @@ class PlacesGetInfoHandler (suggestify.API.Request) :
 
         self.api_ok({'place' : rsp['place']})
         return
+
+class PlacesReverseGeoHandler (suggestify.API.Request) :
+
+    def run (self) :
+
+        required = ('lat', 'lon', 'accuracy')
+
+        if not self.ensure_args(required) :
+            return 
+
+        args = {
+            'lat' : self.request.get('lat'),
+            'lon' : self.request.get('lon'),
+            'accuracy' : self.request.get('accuracy'),            
+        }
+
+        ttl = 60 * 60 * 14
+        
+        rsp = self.proxy_api_call('flickr.places.findByLatLon', args, ttl)
+
+        # wrong and dirty, please to fix
+        self.format = 'json'
+
+        if not rsp :
+            self.api_error(1, 'API call failed to anything')
+            return
+        
+        if rsp['stat'] != 'ok' :
+            self.api_error(2, 'API call failed: %s' % rsp['message'])
+            return
+
+        self.api_ok({'places' : rsp['places']})
+        return
     
 class FindByUsernameHandler (suggestify.API.Request) :
 
