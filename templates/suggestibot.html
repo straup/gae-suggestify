@@ -20,11 +20,17 @@ $(document).ready(function(){
 
    var suggestibot_args = {
 		'suggestify_apihost' : '{{ host_url|escape }}',
-                'flickr_apikey' : '{{ config.flickr_apikey|escape }}',
 		'enable_logging' : {{ config.javascript_logging|escape }},
 		'approve_crumb' : '{{ approve_crumb|escape }}',
 		'reject_crumb' : '{{ reject_crumb|escape }}',
 		'block_crumb' : '{{ block_crumb|escape }}',
+		'robot_sig' : '{{ robot_sig|escape }}',
+		'robot_photo_id' : '{{ robot_photo_id|escape }}',
+        	'robot_lat' : '{{ robot_lat|escape }}',
+        	'robot_lon' : '{{ robot_lon|escape }}',
+        	'robot_acc' : '{{ robot_acc|escape }}',
+        	'robot_context' : '{{ robot_context|escape }}',
+		'robot_uuid' : '{{ robot_uuid|escape }}',
    };
 
    window.suggestibot = new info.aaronland.suggestify.Suggestibot(suggestibot_args);
