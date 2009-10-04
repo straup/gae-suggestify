@@ -30,7 +30,7 @@ class Request (suggestify.Request) :
     return True
 
   def ensure_robot_sig (self, sig_args, robot_sig) :
-    
+
     if robot_sig == '' :
       return False
 
