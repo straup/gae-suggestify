@@ -35,10 +35,6 @@ info.aaronland.suggestify.Review.prototype.approve = function(suggestion_id, pho
 
     var _doThisOnSuccess = function(rsp){
 
-        // TO DO:
-        // a) redirect back to /review
-        // b) remove all the other suggestions for photo id
-        
         var photo_url = rsp.getAttribute('photo_url');
 
         var html = '<div class="approve_ok">';
@@ -50,7 +46,6 @@ info.aaronland.suggestify.Review.prototype.approve = function(suggestion_id, pho
         html += '</div></div>';
 
         $("#whirclick_" + suggestion_id).html(html);
-
     };
 
     var _doThisIfNot = function(rsp){
