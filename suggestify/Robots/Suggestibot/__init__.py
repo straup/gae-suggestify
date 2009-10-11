@@ -75,19 +75,36 @@ class Request (suggestify.Robots.Request) :
             self.error('invalid_sig')
             return    
 
-        # TODO: woeid hoohah <-- should it be fetched again?
+        args = {
+            'photo_id' : suggestion.photo_id,
+            'auth_token' : self.user.token,
+            'check_response' : 1,
+            }
+
+        rsp = self.api_call('flickr.photos.getInfo', args)
         
-        # TODO: check for exisiting suggestion
+        if not rsp :
+            self.error('invalid_photo')
+            return
+
+        if rsp['photo'].has_key('location') :
+            Suggestion.reject_all_pending_suggestions_for_photo(suggestion.photo_id)
+            self.error('already_geotagged')
+            return
         
         mock = self.generate_mock_suggestion()
 
         if not mock :
+            self.error('invalid suggestion')
             return
         
         suggestion = Suggestion.create(mock)
 
         #
-        # this is all copy/pasted out og API/Approve <-- it should probably go in a "library"
+        # this is all copy/pasted out of API/Approve <-- it should probably
+        # go in a "library" but the whole thing gets wrapped up in boring
+        # object/globals/self nonsense and the fact that there aren't any
+        # in Suggestion.py
         #
                     
         args = {'photo_id' : suggestion.photo_id,
@@ -168,8 +185,40 @@ class Request (suggestify.Robots.Request) :
                 }
         
             rsp = self.api_call('flickr.photos.addTags', args)
+
+            # sudo make me a preference
+            
+            if self.user.nsid == 'brooklyn museum' :
+
+                suggested_date = suggestion.date_create
+                suggestor_name = suggestor.username
+                suggestor_url = 'http://www.flickr.com/photos/%s' % suggestor.nsid
+
+                if suggestor.path_alias != '' :
+                    suggestor_url = 'http://www.flickr.com/photos/%s' % suggestor.path_alias
+                    
+                # Note: don't lookup/display the place name for the WOE ID
+                # until it's possible to do corrections on approval.
+                
+                comment = """On %s, <a href="%s">%s</a> suggested where this photo was taken, and they were right!
+                """ % (suggested_date, suggestor_url, suggestor_name)
+
+                method = 'flickr.photos.comments.addComment'
+            
+                comments_args = {
+                    'photo_id' : photo_id,
+                    'comment_text' : comment,
+                    'auth_token' : self.user.token,
+                }
+                
+                rsp = self.api_call(method, args)
+
+        #
         
         Suggestion.approve_suggestion(suggestion)
+        Suggestion.reject_all_pending_suggestions_for_photo(suggestion.photo_id)
+        
+        #
         
         photo_owner = self.user.nsid
 
@@ -178,9 +227,7 @@ class Request (suggestify.Robots.Request) :
             
         photo_url = "http://www.flickr.com/photos/%s/%s" % (photo_owner, suggestion.photo_id)
 
-        # END OF copy/paste code
-        
-        # TODO: return ok!
+        return self.ok({'photo_url' : photo_url})
         
     def get (self, uuid) :
 
@@ -278,17 +325,31 @@ class Request (suggestify.Robots.Request) :
         if rsp['photo'].has_key('location') :
             self.error('already_geotagged')
             return
+
+        suggestor = User.get_user_by_nsid(self.config['flickr_nsid'])
         
+        #
+        # get the WOE ID
+        #
+
+        woeid = 0    
+
+        args = {
+            'lat' : self.request.get('lat'),
+            'lon' : self.request.get('lon'),
+            'accuracy' : self.request.get('acc'),            
+        }
+
+        ttl = 60 * 60 * 14
+        
+        rsp = self.proxy_api_call('flickr.places.findByLatLon', args, ttl)
+
+        if rsp and rsp.has_key(rsp['places']) :
+            woeid = rsp['places']['place'][0]['woe_id']
+
         #
 	# Create a mock suggestion
         #
-        
-        suggestor = User.get_user_by_nsid(self.config['flickr_nsid'])
-
-        woeid = 0
-
-        if self.request.get('woeid') != '' :
-            woeid = self.request.get('woeid')
             
         suggestion = {
             'photo_id' : int(photo_id),

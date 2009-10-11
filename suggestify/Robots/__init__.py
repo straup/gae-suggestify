@@ -1,6 +1,7 @@
 import suggestify
 import config
 import md5
+from django.utils import simplejson
 
 # TO DO (MAYBE) : nonce and/or timestamp?
 
@@ -31,6 +32,8 @@ class Request (suggestify.Request) :
 
   def ensure_robot_sig (self, sig_args, robot_sig) :
 
+    return True
+  
     if robot_sig == '' :
       return False
 
@@ -64,10 +67,16 @@ class Request (suggestify.Request) :
     raw.append("_secret=%s" % secret)
     return md5.new("&".join(raw)).hexdigest()
        
-  def error (self, reason='', is_api=False) :
+  def error (self, reason='INVISIBLE ERROR', is_api=False) :
 
     if is_api :
-      return
+      out = {'stat' : 'fail', 'error' : { 'code' : code, 'message' : reason } }
+      return simplejson.dumps({'rsp' : out})      
     
     self.assign("error", reason)
     self.display("robots_error.html")
+
+  def ok (self, out={}) :
+    out['stat'] = 'ok'
+    return simplejson.dumps({'rsp' : out})
+    
