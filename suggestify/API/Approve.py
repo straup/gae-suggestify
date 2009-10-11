@@ -58,6 +58,13 @@ class ApproveHandler (suggestify.API.Request) :
         
             self.api_error(9, 'Photo has already been geotagged')
             return
+
+        #
+        # Also, this is all cloned in Robots/Suggestibot <-- it should probably
+        # go in a "library" but the whole thing gets wrapped up in boring
+        # object/globals/self nonsense and the fact that there aren't any
+        # in Suggestion.py
+        #
         
         #
         # Okay! Geotag the fucking photo!!!
