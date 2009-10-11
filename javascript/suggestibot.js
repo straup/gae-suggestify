@@ -68,12 +68,12 @@ info.aaronland.suggestify.Suggestibot.prototype.approve = function(suggestion_id
         'crumb' : this.args['approve_crumb'],
         'geo_perms' : perms,
         'geo_context' : context,
-        '_s' : this.args['robot_sig'],
         'photo_id' : this.args['robot_photo_id'],
         'lat' : this.args['robot_lat'],
         'lon' : this.args['robot_lon'],
         'acc' : this.args['robot_acc'],
         'context' : this.args['robot_context'],        
+        '_s' : this.args['robot_sig'],
     };
 
     //
@@ -83,7 +83,7 @@ info.aaronland.suggestify.Suggestibot.prototype.approve = function(suggestion_id
     var req = new XMLHttpRequest();
     var url = this.args['suggestify_apihost']  + '/robots/' + this.args['robot_uuid'];
 
-    console.log(url)
+    console.log(meth_args)
 
     var params = new Array();
 
@@ -93,8 +93,6 @@ info.aaronland.suggestify.Suggestibot.prototype.approve = function(suggestion_id
     
     params = params.join("&");
             
-    // this.log("call " + url + ' with ' + params);
-
     req.open('POST', url, true);
 
     req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
