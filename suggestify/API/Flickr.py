@@ -159,4 +159,3 @@ class PeopleGetInfoHandler (suggestify.API.Request) :
 
         self.api_ok({'person' : rsp['person']})
         return
-

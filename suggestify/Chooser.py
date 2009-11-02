@@ -1,4 +1,6 @@
 import suggestify
+import re
+import urlparse
 
 import FlickrApp.User as User
 import FlickrApp.User.Membership as Membership
@@ -44,6 +46,31 @@ class ChooserHandler (suggestify.Request) :
   
     elif context == 'photo' :
 
+      # magic referer glue, mostly for the Brooklyn Museum
+      
+      headers = self.request.headers
+
+      if headers.has_key('Referer') :
+        
+        u = urlparse.urlparse(headers['Referer'])
+
+        m = re.match(r'(?:www\.)?flickr\.com', u[1])
+        
+        if not m :
+          print "POO"
+          self.error(404)
+          return
+
+        m = re.match(r'/photos/(?:[^/]+)/(\d+)', u[2])
+        
+        if m :
+          filter = m.groups()[0]
+        else :
+          self.error(404)          
+          return
+      
+      # end of magic glue
+      
       method = 'flickr.photos.getInfo'
 
       args = {
