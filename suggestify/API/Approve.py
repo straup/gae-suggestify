@@ -2,6 +2,8 @@ import suggestify.API
 import suggestify.Suggestion as Suggestion
 
 import FlickrApp.User as User
+import config
+import logging
 
 class ApproveHandler (suggestify.API.Request) :
 
@@ -162,10 +164,13 @@ class ApproveHandler (suggestify.API.Request) :
             rsp = self.api_call('flickr.photos.addTags', machinetags_args)
 
             # sudo make me a preference
-            
-            if self.user.nsid == 'brooklyn museum' :
 
-                suggested_date = suggestion.date_create
+            # TO DO: this should not be called "rewards" but it's early
+            # and I haven't had much coffee....
+            
+            if self.user.nsid in config.rewards :
+
+                suggested_date = suggestion.created.strftime("%B %d, %Y")
                 suggestor_name = suggestor.username
                 suggestor_url = 'http://www.flickr.com/photos/%s' % suggestor.nsid
 
@@ -174,20 +179,27 @@ class ApproveHandler (suggestify.API.Request) :
                     
                 # Note: don't lookup/display the place name for the WOE ID
                 # until it's possible to do corrections on approval.
+
+                nearby_url = "http://www.flickr.com/photos/%s/%s/nearby/?by=everyone&taken=recent&sort=distance&page=1&show=detail" % (self.user.nsid, suggestion.photo_id)
                 
-                comment = """On %s, <a href="%s">%s</a> suggested where this photo was taken, and they were right!
-                """ % (suggested_date, suggestor_url, suggestor_name)
+                comment = """On %s, <a href="%s">%s</a> suggested <a href="%s">where this photo was taken</a>, and they were right!
+                """ % (suggested_date, suggestor_url, suggestor_name, nearby_url)
 
                 method = 'flickr.photos.comments.addComment'
             
                 comments_args = {
-                    'photo_id' : photo_id,
+                    'photo_id' : suggestion.photo_id,
                     'comment_text' : comment,
                     'auth_token' : self.user.token,
                 }
                 
-                rsp = self.api_call(method, args)
-            
+                rsp = self.api_call(method, comments_args)
+
+                if not rsp :
+                    logging.error("Failed to post approval comment")
+
+                # TODO, MAYBE: delete initial suggestion comment here?
+                
         #
         # Update (possibly do this before setting tags?)
         #
