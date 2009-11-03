@@ -57,7 +57,6 @@ class ChooserHandler (suggestify.Request) :
         m = re.match(r'(?:www\.)?flickr\.com', u[1])
         
         if not m :
-          print "POO"
           self.error(404)
           return
 
