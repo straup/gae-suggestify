@@ -126,7 +126,7 @@ class SuggestHandler (suggestify.API.Request) :
         settings = Settings.get_settings_for_user(owner_nsid)
 
         if settings and settings.email_notifications :
-            
+
             to_addr = settings.email_address
             subject = 'You have a new suggestion for one of your photos!'
             body = """Greetings from the Suggestify project!
@@ -149,14 +149,14 @@ Cheers,
         # Post comment to the photo on Flickr?
         #
 
-        if config.config['notifications_flickr_comments'] and settings.comment_notifications  :
+        if config.config['notifications_flickr_comments'] and settings.comment_notifications :
 
             # Do not display the lat,lon in the commment since they
             # are public for anyone to see. Only display WOE ID and name,
-            # if we can find them. 
+            # if we can find them.
 
             is_at = ""
-            
+
             if woeid :
 
                 method = 'flickr.places.getInfo'
@@ -166,11 +166,11 @@ Cheers,
 
                 if rsp and rsp['stat'] == 'ok' and rsp.has_key('place') :
                     # note the trailing space at the end
-                    
+
                     is_at = """I think it was taken somewhere around: <a href="http://www.flickr.com/places/%s">%s</a>. """ % (woeid, rsp['place']['name'])
-                    
+
             # build the comment
-            
+
             comment = """I've suggested a location for this photo over at the <a href="http://suggestify.appspot.com">Suggestify</a> project.
 
 %sYou can see the exact location and approve or reject this suggestion by following this link:
@@ -183,9 +183,9 @@ If you do approve the suggestion then your photo will be automagically geotagged
 """ % (is_at, review_link, review_link)
 
             # post the comment
-            
+
             method = 'flickr.photos.comments.addComment'
-            
+
             args = {
                 'photo_id' : photo_id,
                 'comment_text' : comment,
@@ -196,23 +196,23 @@ If you do approve the suggestion then your photo will be automagically geotagged
 
             # what is the right way to notify the user that
             # suggestion was recorded by the comment was not?
-            
-            if rsp and rsp['stat'] :
+
+            if rsp and rsp['stat'] == 'ok':
                 comment_id = rsp['comment']['id']
                 s.comment_id = comment_id
                 s.put()
-                
+
             else :
                 msg = 'Failed to post review comment: '
 
                 if rsp :
                     msg += rsp['message']
-                    
+
                 self.log(msg, 'warning')
-                
+
         #
         # OKAY!
         #
-        
+
         self.api_ok()
         return
