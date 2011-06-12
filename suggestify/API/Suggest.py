@@ -15,7 +15,7 @@ class SuggestHandler (suggestify.API.Request) :
         required = ('crumb', 'photo_id', 'owner_id', 'latitude', 'longitude')
 
         if not self.ensure_args(required) :
-            return 
+            return
 
         #
         # Context
@@ -26,7 +26,7 @@ class SuggestHandler (suggestify.API.Request) :
         if geo_context :
 
             geo_context = int(geo_context)
-            
+
             if not geo_context in (0, 1, 2) :
                 self.api_error(3, 'Not a valid geo context')
                 return
@@ -37,17 +37,17 @@ class SuggestHandler (suggestify.API.Request) :
         #
         #
         #
-        
+
         if not self.ensure_crumb('method=suggest') :
             return
 
         owner_nsid = self.request.get('owner_id')
         photo_id = long(self.request.get('photo_id'))
-        
+
         #
         # Blocked?
         #
-    
+
         if Blocked.is_user_blocked(self.user.nsid, owner_nsid) :
             self.api_error(3, 'You do not have permission to suggest a location for this photo.')
             return
@@ -55,11 +55,11 @@ class SuggestHandler (suggestify.API.Request) :
         #
         # Opted out
         #
-        
+
         if Membership.has_user_opted_out(owner_nsid) :
             self.api_error(4, 'You do not have permission to suggest a location for this photo.')
             return
-        
+
         #
         # Already suggested?
         # This query will probably need to be less blunt
@@ -76,25 +76,25 @@ class SuggestHandler (suggestify.API.Request) :
 
         if woeid != '' :
             woeid = int(woeid)
-            
+
         #
         # grab the photo
         #
 
         method = 'flickr.photos.getInfo'
-        
+
         args = {
             'photo_id' : photo_id,
         }
-        
+
         rsp = self.proxy_api_call(method, args)
-        
+
         #
         # Recordify!
         #
-        
+
         owner_nsid = self.request.get('owner_id')
-        
+
         args = {
             'photo_id' : photo_id,
             'owner_id' : owner_nsid,
@@ -108,12 +108,12 @@ class SuggestHandler (suggestify.API.Request) :
         }
 
         s = Suggestion.create(args)
-        
+
         if not s :
 
             msg = "failed to add suggestion for %s" % str(args)
             self.log(msg, 'warning')
-            
+
             self.api_error(2, 'There was a problem recording your suggestion.')
             return
 
@@ -122,7 +122,7 @@ class SuggestHandler (suggestify.API.Request) :
         #
 
         review_link = "%s/review/%s" % (self.request.host_url, photo_id)
-            
+
         settings = Settings.get_settings_for_user(owner_nsid)
 
         if settings and settings.email_notifications :
@@ -149,7 +149,16 @@ Cheers,
         # Post comment to the photo on Flickr?
         #
 
+        send_comment = False
+
         if config.config['notifications_flickr_comments'] and settings.comment_notifications :
+            send_comment = True
+
+        if self.user.perms != 2:
+            send_comment = False
+            self.log('not setting a comment; insufficient perms', 'info')
+
+        if send_comment:
 
             # Do not display the lat,lon in the commment since they
             # are public for anyone to see. Only display WOE ID and name,

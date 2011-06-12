@@ -79,16 +79,16 @@ info.aaronland.suggestify.Chooser.prototype.photosSearch = function(args){
 
         var uid = _self.generatePhotoUID(photo, 's');
 
-        var url = [ 'http://farm', photo.farm, '.static.flickr.com/', photo.server, '/', photo.id, '_', photo.secret ].join('');    
+        var url = [ 'http://farm', photo.farm, '.static.flickr.com/', photo.server, '/', photo.id, '_', photo.secret ].join('');
         var img = '<img src="' + encodeURI(url) + '_s.jpg" width="75" height="75" alt="' + encodeURIComponent(photo.title) + '" id="' + uid  +'"';
 
-	img += 'onclick="javascript:window.chooser.loadPhoto(' + encodeURIComponent(photo.id) + ');return false;" />';
+	    img += 'onclick="javascript:window.chooser.loadPhoto(' + encodeURIComponent(photo.id) + ');return false;" />';
 
         return img;
     };
 
     var _loadCarousel = function(carousel, state){
-    
+
         for (var i = carousel.first; i <= carousel.last; i++) {
 
             if (carousel.has(i)) {
@@ -107,11 +107,12 @@ info.aaronland.suggestify.Chooser.prototype.photosSearch = function(args){
 
             carousel.add(i, _getItemHTML(photo));
         }
-    
+
     };
 
     var _doThisOnSuccess = function(rsp){
 
+        // console.log(rsp);
         // we really do reference this elsewhere
         _self.rsp = rsp;
 
@@ -149,31 +150,19 @@ info.aaronland.suggestify.Chooser.prototype.photosSearch = function(args){
 
         $("#photos").html("<ul></ul>");
 
-        // this isn't quite right...
-
-        var _onNext = function(foo, bar, canhas_next){
-
-             if (canhas_next){
-                    return;
-             }
-
-             var nsid = args['nsid'];
-             var page = (args['page']) ? args['page'] + 1 : 2;
-              _self.photosSearch({'nsid' : nsid, 'page' : page});
-        };
-
         jQuery('#photos').jcarousel({
                 'size' : size,
                 'scroll':5,
                 'visible':5,
                 'itemLoadCallback': { onBeforeAnimation: _loadCarousel },
-                // 'buttonNextCallback' : _onNext,
          });
 
         $("#whatisthis").show();
     };
 
     var _doThisIfNot = function (rsp){
+
+        // console.log(rsp);
 
         var html = '<p style="color:red;font-weight:700;font-size:14pt;max-width:585px;">';
         html += 'Hrm. There was a problem fetching photos for <em>' + _self.utils.scrub(args['username'], 1) + '</em>. ';
@@ -442,7 +431,7 @@ info.aaronland.suggestify.Chooser.prototype.queryPlacemaker = function(photo_id)
     var _self = this;
 
     _onMatch = function(rsp){
-        
+
         _self.log('placemaker dispatched returned');
 
         if (rsp.error){
@@ -508,7 +497,7 @@ info.aaronland.suggestify.Chooser.prototype.skip = function(photo_id){
 
     this.log("skip " + photo_id);
 
-    var photo = this.get_photo_by_offset((this.current_index + 1));    
+    var photo = this.get_photo_by_offset((this.current_index + 1));
 
     if (! photo){
         $("#options").html('<div id="loading">FETCHING MORE PHOTOS...</div>');

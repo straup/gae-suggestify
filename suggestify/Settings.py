@@ -14,14 +14,14 @@ def get_settings_for_user (nsid, auto_create=True) :
             return create_settings_for_user(nsid)
 
         return False
-    
+
 def create_settings_for_user (nsid) :
 
     settings = dbSettings()
     settings.nsid = nsid
     settings.email_notifications = False
-    settings.email_confirmed = False            
-    settings.comment_notifications = True  
+    settings.email_confirmed = False
+    settings.comment_notifications = True
     settings.put()
-    
+
     return settings

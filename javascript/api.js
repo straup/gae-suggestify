@@ -16,7 +16,7 @@ info.aaronland.suggestify.API = function(args){
     this.args = args;
 
     this.host = args['host'];
-    this.endpoint = '/api';   
+    this.endpoint = '/api';
 
     if (! info.aaronland.suggestify.JSON){
 
@@ -28,7 +28,7 @@ info.aaronland.suggestify.API = function(args){
 
         var head = document.getElementsByTagName("head").item(0);
         head.appendChild(script);
-        
+
         info.aaronland.suggestify.JSON = 1;
     }
 
@@ -47,9 +47,9 @@ info.aaronland.suggestify.API.prototype.api_call = function(method, args, doThis
     for (key in args){
         params.push(encodeURIComponent(key) + '=' + encodeURIComponent(args[key]));
     }
-    
+
     params = params.join("&");
-            
+
     this.log("call " + url + ' with ' + params);
 
     req.open('POST', url, true);
@@ -90,7 +90,7 @@ info.aaronland.suggestify.API.prototype.api_call = function(method, args, doThis
             rsp = json['rsp'];
             stat = rsp['stat'];
         }
-        
+
         else {
             _self.log("uhh...there's neither any XML to parse or a JSON parser to parse with. freaking out...");
             return;
@@ -99,7 +99,12 @@ info.aaronland.suggestify.API.prototype.api_call = function(method, args, doThis
         _self.log("api call (" + method + ") dispatch returned with API status: " + stat);
 
         if ((stat == 'ok') && (doThisOnSuccess)){
-            doThisOnSuccess(rsp);
+            try {
+                doThisOnSuccess(rsp);
+            }
+            catch (e){
+                console.log(e);
+            }
         }
 
         else if (doThisIfNot){
@@ -112,7 +117,7 @@ info.aaronland.suggestify.API.prototype.api_call = function(method, args, doThis
     };
 
     req.onreadystatechange = _onReadyState;
-    req.send(params);  
+    req.send(params);
 
     this.log("api call dispatched");
 };
