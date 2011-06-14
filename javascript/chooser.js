@@ -532,12 +532,12 @@ info.aaronland.suggestify.Chooser.prototype.build_search_index = function(rsp){
     this.current_index = null;
 
     var count = rsp.photos.photo.length;
-    
+
     for (var i=0; i < count; i++){
         var id = rsp.photos.photo[i].id;
         this.search_index[ id ] = i;
     }
-    
+
     return i;
 };
 
@@ -551,7 +551,7 @@ info.aaronland.suggestify.Chooser.prototype.get_photo_by_offset = function(idx){
     }
 
     var photo = this.rsp.photos.photo[ idx ];
-    
+
     this.current_index = Number(idx);
     return photo;
 }

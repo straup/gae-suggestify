@@ -73,17 +73,17 @@ $(document).ready(function(){
 
    window.iamheremap = new info.aaronland.iamhere.Map('iamheremap', map_args);
    window.chooser = new info.aaronland.suggestify.Chooser(chooser_args);
-	
+
    // quick! look over there!!
 
-
    window.chooser.rsp = { 'photos' : {{ photo_json }} };
+   window.chooser.build_search_index(window.chooser.rsp);
 
    var photo = window.chooser.get_photo_by_offset(0);
    window.chooser.loadPhoto(photo);
 
    $("#whatisthis").show();
-	
+
    var buddyicon_args = {
 		'suggestify_apihost' : '{{ host_url|escape }}',
 		'enable_logging' : {{ config.javascript_logging|escape }},
